@@ -1,0 +1,54 @@
+{
+  "name": "api_gestaocondominios",
+  "version": "1.0.0",
+  "description": "API - TCC - Lucas Gallon - PUC MINAS 2022",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasgallon90/api-gestao-condominios.git"
+  },
+  "author": "Lucas Gallon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucasgallon90/api-gestao-condominios/issues"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --inspect src/server.js",
+    "test": "cross-env NODE_ENV=test && jest --forceExit --runInBand",
+    "docs": "node src/swagger.js"
+  },
+  "homepage": "https://github.com/lucasgallon90/api-gestao-condominios#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^15.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "helmet": "^3.22.0",
+    "jest": "^27.5.1",
+    "joi": "^17.5.0",
+    "joi-objectid": "^4.0.2",
+    "joi-translation-pt-br": "0.0.6",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
+    "mongoose": "^6.1.5",
+    "passport": "^0.5.2",
+    "passport-google-oauth": "^2.0.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "swagger-autogen": "^2.18.8",
+    "swagger-ui-express": "^4.3.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "mongodb-memory-server": "^8.8.0",
+    "nodemon": "^2.0.4",
+    "supertest": "^6.2.2"
+  }
+}
