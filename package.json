@@ -14,6 +14,7 @@
   },
   "scripts": {
     "start": "node src/server.js",
+    "seed": "node src/seed.js",
     "dev": "nodemon --inspect src/server.js",
     "test": "cross-env NODE_ENV=test && jest --forceExit --runInBand",
     "docs": "node src/swagger.js"
