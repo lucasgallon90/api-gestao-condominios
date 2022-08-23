@@ -3,12 +3,18 @@ const { LIMIT } = require("../utils/index.js");
 
 module.exports = class Condominio {
   static async list(req, res) {
-    const { filters } = req.body;
+    let filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     try {
       let paginate = {};
       if (page && limit) {
         paginate = { skip: limit * (page - 1), limit };
+      }
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
       }
       const results = await condominioRepository.list({
         filters,
@@ -20,6 +26,7 @@ module.exports = class Condominio {
       } */
       return res.json(results);
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }

@@ -13,6 +13,7 @@ Joi.objectId = require("joi-objectid")(Joi);
 const { messages } = require("joi-translation-pt-br");
 const authSuperAdminMiddleware = require("../middleware/authSuperAdmin.middleware.js");
 const CondominioDTO = require("../database/dtos/condominio.dto.js");
+const { LIMIT } = require("../utils");
 
 router.post(
   "/list",
@@ -25,7 +26,7 @@ router.post(
         cidade: Joi.string().optional(),
         uf: Joi.objectId().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional() }),
+      query: Joi.object().keys({ page: Joi.number().optional(),limit: Joi.number().optional().max(LIMIT), }),
     },
     {
       messages: messages,

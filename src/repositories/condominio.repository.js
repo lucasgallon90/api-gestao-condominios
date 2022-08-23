@@ -2,7 +2,6 @@ const condominio = require("../database/models/condominio.schema.js");
 
 module.exports = class Condominio {
   static async list({ filters, paginate}) {
-   
     return await condominio.find(filters, { }, paginate);
   }
   static async getById(_id) {
