@@ -4,23 +4,70 @@ const bcrypt = require("bcrypt");
 
 module.exports = class Usuario {
   static async list(req, res) {
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     try {
       let paginate = {};
       if (page && limit) {
-        paginate = { skip: limit * (page - 1), limit };
+        paginate = [
+          { $skip: limit * (page - 1) },
+          { $limit: limit },
+          { $sort: { createdAt: -1 } },
+        ];
       }
-      const results = await usuarioRepository.list({
-        filters: { ...filters },
-        paginate,
-      });
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
+      }
+      let pipeline = [
+        {
+          $match: { ...filters },
+        },
+        {
+          $lookup: {
+            from: "condominios",
+            localField: "_idCondominio",
+            foreignField: "_id",
+            as: "condominio",
+          },
+        },
+        {
+          $unwind: {
+            path: "$condominio",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            nome: 1,
+            email: 1,
+            telefone: 1,
+            apto: 1,
+            bloco: 1,
+            tipoUusario: 1,
+            ativo: 1,
+            googleId: 1,
+            "condominio.nome": 1,
+            "condominio.endereco": 1,
+            "condominio.cidade": 1,
+            "condominio.uf": 1,
+            "condominio.cep": 1,
+            "condominio.codigoCondominio": 1,
+          },
+        },
+        ...paginate,
+      ];
+      const results = await usuarioRepository.list(pipeline);
       /* #swagger.responses[200] = {
       description: 'Usuários listados com sucesso',
       schema: [{ $ref: '#/definitions/UsuarioResponse'}]
       } */
       return res.status(results ? 200 : 204).json(results);
     } catch (error) {
+      console.log(error);
       res.status(400).send(error);
     }
   }
@@ -92,8 +139,8 @@ module.exports = class Usuario {
   static async create(req, res) {
     const usuario = req.body;
     try {
-      if(!usuario.senha){
-        res.status(400).json({error:"Senha é obrigatória"})
+      if (!usuario.senha) {
+        res.status(400).json({ error: "Senha é obrigatória" });
       }
       const result = await usuarioRepository.create(usuario);
       /*

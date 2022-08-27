@@ -2,8 +2,8 @@ const usuario = require("../database/models/usuario.schema.js");
 const jwt = require("jsonwebtoken");
 
 module.exports = class Usuario {
-  static async list({ filters, paginate }) {
-    return await usuario.find(filters, {}, paginate);
+  static async list(filters) {
+    return await usuario.aggregate(filters);
   }
   static async get(data) {
     return await usuario.findOne(data);
