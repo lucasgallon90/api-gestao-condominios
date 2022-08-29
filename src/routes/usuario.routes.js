@@ -7,6 +7,7 @@ const {
   create,
   getMorador,
   listMoradores,
+  remove,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -14,6 +15,7 @@ const { messages } = require("joi-translation-pt-br");
 const UsuarioDTO = require("../database/dtos/usuario.dto.js");
 const authSuperAdminMiddleware = require("../middleware/authSuperAdmin.middleware.js");
 const authAdminMiddleware = require("../middleware/authAdmin.middleware.js");
+const { LIMIT } = require("../utils");
 
 router.post(
   "/list/moradores",
@@ -66,6 +68,24 @@ router.get(
 router.post(
   "/list",
   authSuperAdminMiddleware,
+  celebrate(
+    {
+      body: Joi.object().keys({
+        nome: Joi.string().optional(),
+        nomeCondominio: Joi.string().optional(),
+        apto: Joi.string().optional(),
+        bloco: Joi.string().optional(),
+        email: Joi.string().optional(),
+      }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
   /* #swagger.tags = ['Usuário']
   #swagger.parameters['body'] = { in: 'body', description: 'Filtros', type: 'string',  schema: {
                     nome: 'Joaquim',
@@ -78,6 +98,7 @@ router.post(
           page: 1,
       }}
   */
+
   list
 );
 
@@ -184,7 +205,7 @@ router.delete(
       messages: messages,
     }
   ),
-  get
+  remove
 );
 
 module.exports = router;

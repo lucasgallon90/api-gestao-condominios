@@ -21,6 +21,15 @@ module.exports = class Usuario {
             (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
         );
       }
+      let afterLookupFilter = null;
+      if (filters.nomeCondominio) {
+        afterLookupFilter = {
+          $match: {
+            "condominio.nome": { $regex: `.*${filters.nomeCondominio}.*` },
+          },
+        };
+        delete filters.nomeCondominio;
+      }
       let pipeline = [
         {
           $match: { ...filters },
@@ -60,6 +69,9 @@ module.exports = class Usuario {
         },
         ...paginate,
       ];
+      if (afterLookupFilter) {
+        pipeline.push(afterLookupFilter);
+      }
       const results = await usuarioRepository.list(pipeline);
       /* #swagger.responses[200] = {
       description: 'Usuários listados com sucesso',
@@ -203,7 +215,7 @@ module.exports = class Usuario {
   static async remove(req, res) {
     const { id } = req.params;
     try {
-      const result = await usuario.delete({ _id: id });
+      const result = await usuarioRepository.delete({ _id: id });
       /*
       deletar o usuário
       */

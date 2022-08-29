@@ -35,11 +35,12 @@ module.exports = class Usuario {
   }
 
   static async changeSenha(_id, senha) {
-    await usuario.findOneAndUpdate({ _id }, { senha });
+    return await usuario.findOneAndUpdate({ _id }, { senha });
   }
 
   static async delete(_id) {
-    return await usuario.deleteOne({ _id });
+    console.log(_id)
+    return usuario.deleteOne({ _id });
   }
 
   static generateToken(params = {}) {
