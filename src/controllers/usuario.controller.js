@@ -1,6 +1,7 @@
 const usuarioRepository = require("../repositories/usuario.repository.js");
 const { LIMIT } = require("../utils/index.js");
 const bcrypt = require("bcrypt");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Usuario {
   static async list(req, res) {
@@ -56,9 +57,10 @@ module.exports = class Usuario {
             telefone: 1,
             apto: 1,
             bloco: 1,
-            tipoUusario: 1,
+            tipoUsuario: 1,
             ativo: 1,
             googleId: 1,
+            "condominio._id": 1,
             "condominio.nome": 1,
             "condominio.endereco": 1,
             "condominio.cidade": 1,
@@ -111,7 +113,47 @@ module.exports = class Usuario {
   static async get(req, res) {
     const { id } = req.params;
     try {
-      const result = await usuarioRepository.getById(id);
+      const [result] = await usuarioRepository.get([
+        {
+          $match: {
+            _id: ObjectId(id),
+          },
+        },
+        {
+          $lookup: {
+            from: "condominios",
+            localField: "_idCondominio",
+            foreignField: "_id",
+            as: "condominio",
+          },
+        },
+        {
+          $unwind: {
+            path: "$condominio",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            nome: 1,
+            endereco: 1,
+            email: 1,
+            telefone: 1,
+            apto: 1,
+            bloco: 1,
+            tipoUsuario: 1,
+            ativo: 1,
+            googleId: 1,
+            "condominio._id": 1,
+            "condominio.nome": 1,
+            "condominio.endereco": 1,
+            "condominio.cidade": 1,
+            "condominio.uf": 1,
+            "condominio.cep": 1,
+            "condominio.codigoCondominio": 1,
+          },
+        },
+      ]);
       /* #swagger.responses[200] = {
       description: 'Usuário obtido com sucesso',
       schema: { 
@@ -172,12 +214,10 @@ module.exports = class Usuario {
   }
 
   static async update(req, res) {
+    const { id } = req.params;
     const usuario = req.body;
     try {
-      const result = await tipoMovimentacaoRepository.findOneAndUpdate(
-        { _id: id },
-        usuario
-      );
+      const result = await usuarioRepository.update({ _id: id }, usuario);
       /*
      update
      */

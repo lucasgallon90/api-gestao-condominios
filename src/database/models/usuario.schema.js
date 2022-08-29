@@ -3,9 +3,9 @@ const bcrypt = require("bcrypt");
 
 const UsuarioSchema = new mongoose.Schema(
   {
-    nome: { type: String, require: true },
-    email: { type: String, require: true, unique: true },
-    telefone: { type: String },
+    nome: { type: String, require: true, set: function (v) { return v?.trim(); } },
+    email: { type: String, require: true, unique: true, set: function (v) { return v?.trim(); } },
+    telefone: { type: String, set: function (v) { return v?.replace(/\D+/g, '')?.trim(); } },
     apto: { type: String },
     bloco: { type: String },
     senha: { type: String, require: true },

@@ -5,28 +5,16 @@ module.exports = class Usuario {
   static async list(filters) {
     return await usuario.aggregate(filters);
   }
-  static async get(data) {
-    return await usuario.findOne(data);
-  }
-  static async getById(_id) {
-    return await usuario.findById({ _id });
-  }
-
-  static async getByEmail(email) {
-    return await usuario.find({ email });
+  static async get(pipeline) {
+    return await usuario.aggregate(pipeline);
   }
 
   static async create(data) {
     return await usuario.create(data);
   }
 
-  static async update(data) {
-    const usuarioUpdate = { ...data };
-    delete usuarioUpdate._id;
-    const result = await usuario.findByIdAndUpdate(
-      { _id: usuario._id },
-      usuarioUpdate
-    );
+  static async update(filters, data) {
+    const result = await usuario.findByIdAndUpdate(filters, data);
     if (result) {
       return data;
     } else {
@@ -39,7 +27,7 @@ module.exports = class Usuario {
   }
 
   static async delete(_id) {
-    console.log(_id)
+    console.log(_id);
     return usuario.deleteOne({ _id });
   }
 

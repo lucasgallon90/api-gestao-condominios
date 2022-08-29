@@ -8,6 +8,7 @@ const {
   getMorador,
   listMoradores,
   remove,
+  update,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -166,7 +167,7 @@ router.put(
       messages: messages,
     }
   ),
-  get
+  update
 );
 
 router.put(

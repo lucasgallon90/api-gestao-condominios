@@ -20,7 +20,6 @@ passport.use(
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      console.log(profile.id);
       Usuario.findOne({ googleId: profile.id })
         .then((user) => {
           return done(null, user);
