@@ -129,7 +129,7 @@ module.exports = class Ocorrencia {
       /* #swagger.responses[200] = {
       description: 'Total de ocorrências obtido com sucesso',
       schema: { 
-      $ref: '#/definitions/OcorrenciaResponse'} 
+      total: 1
       } */
       return res.json({ total: result || 0 });
     } catch (error) {

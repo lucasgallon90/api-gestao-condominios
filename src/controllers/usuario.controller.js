@@ -190,6 +190,20 @@ module.exports = class Usuario {
     }
   }
 
+  static async getTotal(req, res) {
+    try {
+      const result = await usuarioRepository.getTotal();
+      /* #swagger.responses[200] = {
+      description: 'Total de usuários obtido com sucesso',
+      schema: { 
+      total: 1
+      } */
+      return res.json({ total: result || 0 });
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  }
+
   static async create(req, res) {
     const usuario = req.body;
     try {

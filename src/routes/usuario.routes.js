@@ -9,6 +9,7 @@ const {
   listMoradores,
   remove,
   update,
+  getTotal,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -120,6 +121,14 @@ router.get(
     }
   ),
   get
+);
+
+router.get(
+  "/count/total",
+  authSuperAdminMiddleware,
+  /* #swagger.tags = ['Usuário']
+   */
+  getTotal
 );
 
 router.post(

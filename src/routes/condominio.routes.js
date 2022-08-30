@@ -7,6 +7,7 @@ const {
   remove,
   create,
   update,
+  getTotal,
 } = require("../controllers/condominio.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -26,7 +27,10 @@ router.post(
         cidade: Joi.string().optional(),
         uf: Joi.objectId().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional(),limit: Joi.number().optional().max(LIMIT), }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -81,6 +85,14 @@ router.get(
     }
   ),
   getByCodigo
+);
+
+router.get(
+  "/count/total",
+  authSuperAdminMiddleware,
+  /* #swagger.tags = ['Usuário']
+   */
+  getTotal
 );
 
 router.post(

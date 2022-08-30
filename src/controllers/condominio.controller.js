@@ -67,6 +67,20 @@ module.exports = class Condominio {
     }
   }
 
+  static async getTotal(req, res) {
+    try {
+      const result = await condominioRepository.getTotal();
+      /* #swagger.responses[200] = {
+      description: 'Total de condomínios obtido com sucesso',
+      schema: { 
+      total: 1
+      } */
+      return res.json({ total: result || 0 });
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  }
+
   static async create(req, res) {
     const condominio = req.body;
     try {

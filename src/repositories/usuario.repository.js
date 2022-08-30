@@ -9,6 +9,10 @@ module.exports = class Usuario {
     return await usuario.aggregate(pipeline);
   }
 
+  static async getTotal() {
+    return await usuario.countDocuments();
+  }
+
   static async create(data) {
     return await usuario.create(data);
   }
