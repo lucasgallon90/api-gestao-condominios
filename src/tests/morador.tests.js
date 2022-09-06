@@ -1,44 +1,27 @@
 const request = require("supertest");
-const ocorrencias = require("../database/mocks/ocorrencias.mock");
 const usuarios = require("../database/mocks/usuarios.mock");
 const app = require("../app");
 let token;
-let idCreated;
+let idUsuario;
 let idToDelete;
 
 beforeEach((done) => {
   const { email } = usuarios[0];
   request(app)
     .post(`/v1/auth/login/local`)
-    .send({ email, senha:"123" })
+    .send({ email, senha: "123" })
     .set("Content-type", "application/json")
     .end((err, response) => {
+      idUsuario = response.body.user?._id;
       token = response.body.token;
       done();
     });
 });
 
-describe("Ocorrências", () => {
-  test("Criar ocorrência", () => {
+describe("Moradores", () => {
+  test("Listar moradores", () => {
     return request(app)
-      .post("/v1/ocorrencias/create")
-      .send(ocorrencias[0])
-      .set("Authorization", `Bearer ${token}`)
-      .then((response) => {
-        if (response.text && response.status != 400) {
-          idCreated = JSON.parse(response.text)._id;
-        } else {
-          console.log(response.error.text);
-        }
-        expect(response.statusCode).toBe(200);
-        expect(response.type).toBe("application/json");
-      });
-  });
-
-  test("Atualizar ocorrência", () => {
-    return request(app)
-      .put(`/v1/ocorrencias/update/${idCreated}`)
-      .send(ocorrencias[0])
+      .post("/v1/usuarios/list/moradores")
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -46,9 +29,11 @@ describe("Ocorrências", () => {
       });
   });
 
-  test("Obter ocorrência", () => {
+  test("Atualizar morador", () => {
+    const { senha, tipoUsuario, _idCondominio, ativo, ...rest } = usuarios[0];
     return request(app)
-      .get(`/v1/ocorrencias/${idCreated}`)
+      .put(`/v1/usuarios/moradores/update/${idUsuario}`)
+      .send(rest)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -56,9 +41,9 @@ describe("Ocorrências", () => {
       });
   });
 
-  test("Listar ocorrências", () => {
+  test("Obter morador", () => {
     return request(app)
-      .post("/v1/ocorrencias/list")
+      .get(`/v1/usuarios/moradores/${idUsuario}`)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -66,18 +51,26 @@ describe("Ocorrências", () => {
       });
   });
 
-  test("Deletar ocorrência", async () => {
+  test("Deletar morador", async () => {
+    let tokenSuperAdmin;
     await request(app)
-      .post("/v1/ocorrencias/create")
-      .send(ocorrencias[1])
-      .set("Authorization", `Bearer ${token}`)
+      .post(`/v1/auth/login/local`)
+      .send({ email: "superadmin@gestaodecondominios.com.br", senha: "123" })
+      .set("Content-type", "application/json")
+      .then((response) => {
+        tokenSuperAdmin = response.body.token;
+      });
+    await request(app)
+      .post("/v1/usuarios/create")
+      .send(usuarios[1])
+      .set("Authorization", `Bearer ${tokenSuperAdmin}`)
       .then((response) => {
         if (response.text) {
           idToDelete = JSON.parse(response.text)._id;
         }
       });
     return (res = await request(app)
-      .delete(`/v1/ocorrencias/delete/${idToDelete}`)
+      .delete(`/v1/usuarios/moradores/delete/${idToDelete}`)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);

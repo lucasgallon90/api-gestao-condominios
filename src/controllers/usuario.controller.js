@@ -238,6 +238,7 @@ module.exports = class Usuario {
       if (!usuario.senha) {
         res.status(400).json({ error: "Senha é obrigatória" });
       }
+      
       const result = await usuarioRepository.create(usuario);
       /*
       verificar se email já existe, se usuário não for super admin obter o idCondominio do usuário autenticado.

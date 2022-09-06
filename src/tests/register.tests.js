@@ -4,7 +4,7 @@ const app = require("../app");
 
 describe("Registrar", () => {
   test("Registrar novo usuário", async () => {
-    let {_idCondominio, ...rest} = usuarios[0];
+    let {_idCondominio, ...rest} = usuarios[1];
     rest.codigoCondominio = "condominio1";
     rest.email = "novousuario@gestaocondominios.com"
     return request(app)

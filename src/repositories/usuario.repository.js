@@ -30,9 +30,8 @@ module.exports = class Usuario {
     return await usuario.findOneAndUpdate({ _id }, { senha });
   }
 
-  static async delete(_id) {
-    console.log(_id);
-    return usuario.deleteOne({ _id });
+  static async delete(filters) {
+    return usuario.deleteOne(filters);
   }
 
   static generateToken(params = {}) {
