@@ -10,6 +10,8 @@ const {
   remove,
   update,
   getTotal,
+  updateMorador,
+  removeMorador,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -31,7 +33,10 @@ router.post(
         bloco: Joi.string().optional(),
         email: Joi.string().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional() }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -65,6 +70,56 @@ router.get(
     }
   ),
   getMorador
+);
+
+router.put(
+  "/moradores/update/:id",
+  /* #swagger.tags = ['Usuário']
+   #swagger.parameters['params'] = {
+                in: 'params',
+                description: 'Id do Usuário',
+                schema: { id: '41fc6aa5b49ec355ca0300b4' }
+        } 
+  #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'Usuário',
+                schema: { $ref: '#/definitions/Usuario' }
+        } */
+  celebrate(
+    {
+      body: Joi.object().keys({
+        nome: Joi.string().required(),
+        email: Joi.string().required(),
+        telefone: Joi.string().optional().allow(null, ""),
+        apto: Joi.string().optional().allow(null, ""),
+        bloco: Joi.string().optional().allow(null, ""),
+      }),
+      params: Joi.object().keys({
+        id: Joi.objectId().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  updateMorador
+);
+
+router.delete(
+  "/moradores/delete/:id",
+  /* #swagger.tags = ['Usuário']
+  #swagger.parameters['id'] = {  in: 'path', description: 'id do usuário', type: 'string', required:true } */
+  celebrate(
+    {
+      params: Joi.object().keys({
+        id: Joi.objectId().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  removeMorador
 );
 
 router.post(

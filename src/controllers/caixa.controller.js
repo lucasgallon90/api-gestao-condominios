@@ -100,7 +100,7 @@ module.exports = class Caixa {
       description: 'Total de saídas do caixa',
       schema: [{ saldoInicial: 500}]
       } */
-      return res.json({ total: (result.total || 0) });
+      return res.json({ total: (result?.total || 0) });
     } catch (error) {
       console.log(error);
       res.status(400).json(error);
