@@ -42,7 +42,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "swagger-autogen": "^2.18.8",
+    "swagger-autogen": "^2.21.5",
     "swagger-ui-express": "^4.3.0",
     "uuid": "^8.3.2"
   },

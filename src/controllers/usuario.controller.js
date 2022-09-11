@@ -1,6 +1,7 @@
 const usuarioRepository = require("../repositories/usuario.repository.js");
 const { LIMIT } = require("../utils/index.js");
 const bcrypt = require("bcrypt");
+const { generateToken } = require("../repositories/usuario.repository.js");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Usuario {
@@ -225,7 +226,8 @@ module.exports = class Usuario {
       description: 'Total de usuários obtido com sucesso',
       schema: { 
       total: 1
-      } */
+      }
+     } */
       return res.json({ total: result || 0 });
     } catch (error) {
       res.status(400).json(error);
@@ -236,9 +238,9 @@ module.exports = class Usuario {
     const usuario = req.body;
     try {
       if (!usuario.senha) {
-        res.status(400).json({ error: "Senha é obrigatória" });
+        return res.status(400).json({ error: "Senha é obrigatória" });
       }
-      
+
       const result = await usuarioRepository.create(usuario);
       /*
       verificar se email já existe, se usuário não for super admin obter o idCondominio do usuário autenticado.
@@ -251,6 +253,12 @@ module.exports = class Usuario {
       } */
       return res.json(result);
     } catch (error) {
+      //Duplicate email
+      if (err.code === "11000") {
+        return res
+          .status(400)
+          .json({ error: "Email já existe, por favor selecione outro" });
+      }
       res.status(400).send(error);
       console.log(error);
     }
@@ -272,6 +280,31 @@ module.exports = class Usuario {
       return res
         .status(result ? 200 : 400)
         .json(result ? usuario : { error: "Registro não encontrado" });
+    } catch (error) {
+      res.status(400).send(error);
+      console.log(error);
+    }
+  }
+
+  static async updateUsuarioLogado(req, res) {
+    const { user } = req;
+    const usuario = req.body;
+    try {
+      const result = await usuarioRepository.update({ _id: user._id }, usuario);
+      if (!result) {
+        return res.status(400).json({ error: "Registro não encontrado" });
+      }
+      /*
+     update
+     */
+      /* #swagger.responses[200] = {
+      description: 'Usuário atualizado com sucesso',
+      schema: { 
+      $ref: '#/definitions/UsuarioLogadoResponse'} 
+      } */
+      return res
+        .status(200)
+        .json({ user: usuario, token: generateToken({ user:result }) });
     } catch (error) {
       res.status(400).send(error);
       console.log(error);

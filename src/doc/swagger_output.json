@@ -305,6 +305,167 @@
         }
       }
     },
+    "/v1/usuarios/moradores/update/{id}": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Morador atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/moradores/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Morador deletado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Morador deletado com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/update-usuario-logado": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Joaquim"
+                },
+                "apto": {
+                  "type": "string",
+                  "example": "401"
+                },
+                "bloco": {
+                  "type": "string",
+                  "example": "A"
+                },
+                "telefone": {
+                  "type": "string",
+                  "example": "54 990000000"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "joaquim@gestaodecondominios.com.br"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioLogadoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/v1/usuarios/list": {
       "post": {
         "tags": [
@@ -429,6 +590,44 @@
         }
       }
     },
+    "/v1/usuarios/count/total": {
+      "get": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de usuários obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/v1/usuarios/create": {
       "post": {
         "tags": [
@@ -509,7 +708,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Usuário obtido com sucesso",
+            "description": "Usuário atualizado com sucesso",
             "schema": {
               "$ref": "#/definitions/UsuarioResponse"
             }
@@ -600,9 +799,18 @@
         ],
         "responses": {
           "200": {
-            "description": "Usuário obtido com sucesso",
+            "description": "Usuário deletado com sucesso",
             "schema": {
-              "$ref": "#/definitions/UsuarioResponse"
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Usuário deletado com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
             }
           },
           "400": {
@@ -615,7 +823,7 @@
       }
     },
     "/v1/usuarios/list/{moradores{_idid}": {
-      "get": {
+      "delete": {
         "tags": [
           "Usuário"
         ],
@@ -729,9 +937,9 @@
                   "type": "string",
                   "example": "Aberta"
                 },
-                "_idMorador": {
+                "nomeMorador": {
                   "type": "string",
-                  "example": "61fc6aa5b49ec355ca0300b4"
+                  "example": "Morador"
                 }
               }
             }
@@ -812,7 +1020,16 @@
           "200": {
             "description": "Total de ocorrências obtido com sucesso",
             "schema": {
-              "$ref": "#/definitions/OcorrenciaResponse"
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
             }
           },
           "400": {
@@ -2527,17 +2744,7 @@
           {
             "name": "page",
             "in": "query",
-            "description": "Paginação",
-            "type": "number",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "page": {
-                  "type": "number",
-                  "example": 1
-                }
-              }
-            }
+            "type": "string"
           },
           {
             "name": "limit",
@@ -2784,21 +2991,6 @@
             }
           },
           {
-            "name": "page",
-            "in": "query",
-            "description": "Paginação",
-            "type": "number",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "page": {
-                  "type": "number",
-                  "example": 1
-                }
-              }
-            }
-          },
-          {
             "name": "authorization",
             "in": "header",
             "type": "string"
@@ -2832,21 +3024,6 @@
                 "descricao": {
                   "type": "string",
                   "example": "Cobrança"
-                }
-              }
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Paginação",
-            "type": "number",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "page": {
-                  "type": "number",
-                  "example": 1
                 }
               }
             }
@@ -3018,6 +3195,44 @@
                 "codigo": {
                   "type": "string",
                   "example": "Edifício Frei Paolo II"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/count/total": {
+      "get": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de condomínios obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
                 }
               },
               "xml": {
@@ -3243,10 +3458,6 @@
           "type": "string",
           "example": "olavo@mockgestaocondominios.com"
         },
-        "senha": {
-          "type": "string",
-          "example": "123"
-        },
         "telefone": {
           "type": "string",
           "example": "51900000000"
@@ -3275,6 +3486,43 @@
           "type": "string",
           "example": "61fc6aa5b49ec355ca0300b4"
         },
+        "condominio": {
+          "type": "object",
+          "properties": {
+            "nome": {
+              "type": "string",
+              "example": "Edifício Frei Paolo II"
+            },
+            "endereco": {
+              "type": "string",
+              "example": "Rua Joaquim Barbosa, 120, Centro"
+            },
+            "cidade": {
+              "type": "string",
+              "example": "Porto Alegre"
+            },
+            "uf": {
+              "type": "string",
+              "example": "RS"
+            },
+            "cep": {
+              "type": "string",
+              "example": "91000000"
+            },
+            "codigoCondominio": {
+              "type": "string",
+              "example": "freipaolo"
+            }
+          },
+          "required": [
+            "nome",
+            "endereco",
+            "cidade",
+            "uf",
+            "cep",
+            "codigoCondominio"
+          ]
+        },
         "createdAt": {
           "type": "string",
           "example": "2022-03-24T20:30:01"
@@ -3287,11 +3535,52 @@
       "required": [
         "nome",
         "email",
-        "senha",
         "apto",
         "tipoUsuario",
         "_idCondominio"
       ]
+    },
+    "UsuarioLogadoResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "61fc6aa5b49ec355ca0300b4"
+            },
+            "nome": {
+              "type": "string",
+              "example": "Olavo M."
+            },
+            "email": {
+              "type": "string",
+              "example": "olavo@mockgestaocondominios.com"
+            },
+            "telefone": {
+              "type": "string",
+              "example": "51900000000"
+            },
+            "apto": {
+              "type": "string",
+              "example": "201"
+            },
+            "bloco": {
+              "type": "string",
+              "example": "A"
+            },
+            "_idCondominio": {
+              "type": "string",
+              "example": "61fc6aa5b49ec355ca0300b4"
+            }
+          }
+        },
+        "token": {
+          "type": "string",
+          "example": "jwt token"
+        }
+      }
     },
     "Condominio": {
       "type": "object",

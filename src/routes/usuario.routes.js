@@ -12,6 +12,7 @@ const {
   getTotal,
   updateMorador,
   removeMorador,
+  updateUsuarioLogado,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -120,6 +121,30 @@ router.delete(
     }
   ),
   removeMorador
+);
+
+router.put(
+  "/update-usuario-logado",
+  /* #swagger.tags = ['Usuário']
+  #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'Usuário',
+                schema: {  
+                    nome: 'Joaquim',
+                    apto: '401',
+                    bloco: 'A',
+                    telefone: '54 990000000',
+                    email:'joaquim@gestaodecondominios.com.br' }
+        } */
+  celebrate(
+    {
+      body: UsuarioDTO,
+    },
+    {
+      messages: messages,
+    }
+  ),
+  updateUsuarioLogado
 );
 
 router.post(

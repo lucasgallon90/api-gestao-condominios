@@ -14,6 +14,11 @@ const {
 
 router.post(
   "/list",
+  /* #swagger.tags = ['Tipos de Movimentacão']
+    #swagger.parameters['body'] = { in: 'body', description: 'Filtros', type: 'string',  schema: {
+                      descricao: 'Cobrança',
+                  }}
+    */
   celebrate(
     {
       body: Joi.object().keys({
@@ -25,14 +30,6 @@ router.post(
       messages: messages,
     }
   ),
-  /* #swagger.tags = ['Tipos de Movimentacão']
-    #swagger.parameters['body'] = { in: 'body', description: 'Filtros', type: 'string',  schema: {
-                      descricao: 'Cobrança',
-                  }}
-    #swagger.parameters['page'] = { in: 'query', description: 'Paginação', type: 'number',  schema: {
-          page: 1,
-      }}
-    */
   list
 );
 
@@ -105,7 +102,8 @@ router.delete(
     #swagger.parameters['id'] = {  
         in: 'path', 
     description: 'Deletar Tipos de Movimentacão', 
-    type: 'string', required:true } */
+    type: 'string', required:true 
+  } */
   celebrate(
     {
       params: Joi.object().keys({

@@ -39,8 +39,8 @@ module.exports = class TipoLeitura {
       $ref: '#/definitions/TipoLeituraResponse'} 
       } */
       return res
-      .status(result ? 200 : 400)
-      .json(result ? result : { error: "Registro não encontrado" });
+        .status(result ? 200 : 400)
+        .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
       res.status(400).json(error);
     }

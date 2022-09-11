@@ -90,7 +90,7 @@ router.get(
 router.get(
   "/count/total",
   authSuperAdminMiddleware,
-  /* #swagger.tags = ['Usuário']
+  /* #swagger.tags = ['Condomínio']
    */
   getTotal
 );

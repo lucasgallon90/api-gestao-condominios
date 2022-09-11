@@ -48,6 +48,18 @@ const config = {
       createdAt: "2022-03-24T20:30:01",
       updatedAt: "2022-03-24T20:30:01",
     },
+    UsuarioLogadoResponse: {
+      user: {
+        _id: "61fc6aa5b49ec355ca0300b4",
+        nome: "Olavo M.",
+        email: "olavo@mockgestaocondominios.com",
+        telefone: "51900000000",
+        apto: "201",
+        bloco: "A",
+        _idCondominio: "61fc6aa5b49ec355ca0300b4",
+      },
+      token: "jwt token",
+    },
     Condominio: {
       $nome: "Edifício Frei Paolo II",
       $endereco: "Rua Joaquim Barbosa, 120, Centro",

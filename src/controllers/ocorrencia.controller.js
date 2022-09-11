@@ -130,7 +130,8 @@ module.exports = class Ocorrencia {
       description: 'Total de ocorrências obtido com sucesso',
       schema: { 
       total: 1
-      } */
+      }
+     } */
       return res.json({ total: result || 0 });
     } catch (error) {
       res.status(400).json(error);

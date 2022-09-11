@@ -18,12 +18,7 @@ module.exports = class Usuario {
   }
 
   static async update(filters, data) {
-    const result = await usuario.findByIdAndUpdate(filters, data);
-    if (result) {
-      return data;
-    } else {
-      throw new Error("id não encontrado");
-    }
+    return await usuario.findByIdAndUpdate(filters, data,{ new: true });
   }
 
   static async changeSenha(_id, senha) {

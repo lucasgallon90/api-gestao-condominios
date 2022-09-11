@@ -74,7 +74,8 @@ module.exports = class Condominio {
       description: 'Total de condomínios obtido com sucesso',
       schema: { 
       total: 1
-      } */
+      }
+     } */
       return res.json({ total: result || 0 });
     } catch (error) {
       res.status(400).json(error);
