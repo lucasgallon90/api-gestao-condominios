@@ -16,7 +16,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `http://localhost:${process.env.PORT}/v1/auth/login/google/callback`,
+      callbackURL: `${process.env.CLIENT_URL}/v1/auth/login/google/callback`,
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
@@ -37,7 +37,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `http://localhost:${process.env.PORT}/v1/auth/register/google/callback`,
+      callbackURL: `${process.env.CLIENT_URL}/v1/auth/register/google/callback`,
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
