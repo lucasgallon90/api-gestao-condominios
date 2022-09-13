@@ -45,9 +45,10 @@ module.exports = class Caixa {
     const { user } = req;
     const { saldoInicial } = req.body;
     try {
+      const saldoInicialAnterior = await caixaRepository.getSaldoInicial();
       await caixaRepository.updateSaldoInicial({
         filters: { _id: user._idCondominio },
-        data: { saldoCaixaInicial: saldoInicial },
+        data: { saldoCaixaInicial: saldoInicial, saldoCaixaAtual: saldoInicial - (saldoInicialAnterior.saldoCaixaAtual || 0) },
       });
       /* #swagger.responses[200] = {
       description: 'Saldo inicial do caixa atualizado com sucesso',
