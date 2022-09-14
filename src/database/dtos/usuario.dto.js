@@ -7,7 +7,7 @@ const UsuarioDTO = Joi.object().keys({
   apto: Joi.string().optional().allow(null,""),
   bloco: Joi.string().optional().allow(null,""),
   senha: Joi.string().optional().allow(null,""),
-  tipoUsuario: Joi.string().optional().allow("admin", "superAdmin", "morador").default("morador"),
+  tipoUsuario: Joi.string().optional().allow("admin", "superAdmin", "morador"),
   ativo: Joi.boolean().optional().default(true), 
   googleId: Joi.string().optional().allow(null,""),
   codigoCondominio: Joi.string().optional().allow(null,""),

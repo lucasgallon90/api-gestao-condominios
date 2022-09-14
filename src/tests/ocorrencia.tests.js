@@ -10,7 +10,7 @@ beforeEach((done) => {
   const { email } = usuarios[0];
   request(app)
     .post(`/v1/auth/login/local`)
-    .send({ email, senha:"123" })
+    .send({ email, senha: "123" })
     .set("Content-type", "application/json")
     .end((err, response) => {
       token = response.body.token;
@@ -83,5 +83,15 @@ describe("Ocorrências", () => {
         expect(response.statusCode).toBe(200);
         expect(response.type).toBe("application/json");
       }));
+  });
+
+  test("Total de ocorrências", async () => {
+    return await request(app)
+      .get(`/v1/ocorrencias/count/total`)
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
   });
 });

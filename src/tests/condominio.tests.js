@@ -80,4 +80,14 @@ describe("Condomínios", () => {
         expect(response.type).toBe("application/json");
       }));
   });
+
+  test("Total de condomínios", async () => {
+    return await request(app)
+      .get(`/v1/condominios/count/total`)
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
 });

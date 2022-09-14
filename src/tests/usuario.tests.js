@@ -90,4 +90,39 @@ describe("Usuários", () => {
         expect(response.type).toBe("application/json");
       }));
   });
+
+  test("Total de usuários", async () => {
+    return await request(app)
+      .get(`/v1/usuarios/count/total`)
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
+
+  test("Atualizar senha", async () => {
+    return await request(app)
+      .put(`/v1/usuarios/update-senha`)
+      .send({ novaSenha: "123" })
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
+
+  test("Atualizar o usuário logado e gerar novo token", async () => {
+    return await request(app)
+      .put(`/v1/usuarios/update-usuario-logado`)
+      .send({
+        nome: "Super Admin",
+        email: "superadmin@gestaodecondominios.com.br",
+      })
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
 });

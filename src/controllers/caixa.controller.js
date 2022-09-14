@@ -45,11 +45,32 @@ module.exports = class Caixa {
     const { user } = req;
     const { saldoInicial } = req.body;
     try {
-      const saldoInicialAnterior = await caixaRepository.getSaldoInicial();
-      await caixaRepository.updateSaldoInicial({
-        filters: { _id: user._idCondominio },
-        data: { saldoCaixaInicial: saldoInicial, saldoCaixaAtual: saldoInicial - (saldoInicialAnterior.saldoCaixaAtual || 0) },
-      });
+      const saldosAnteriores = await caixaRepository.getSaldos();
+      console.log(saldosAnteriores);
+      console.log(saldoInicial);  
+      if (
+        saldosAnteriores.saldoCaixaInicial === saldosAnteriores.saldoCaixaAtual &&
+        saldoInicial === 0
+      ) {
+        await caixaRepository.updateSaldoInicial({
+          filters: { _id: user._idCondominio },
+          data: {
+            saldoCaixaInicial: 0,
+            saldoCaixaAtual: 0,
+          },
+        });
+      } else {
+        await caixaRepository.updateSaldoInicial({
+          filters: { _id: user._idCondominio },
+          data: {
+            saldoCaixaInicial: saldoInicial,
+            saldoCaixaAtual:
+              saldoInicial +
+              (saldosAnteriores.saldoAtual || 0) -
+              (saldosAnteriores.saldoInicial || 0),
+          },
+        });
+      }
       /* #swagger.responses[200] = {
       description: 'Saldo inicial do caixa atualizado com sucesso',
       schema: [{ saldoInicial: 500}]
@@ -101,7 +122,7 @@ module.exports = class Caixa {
       description: 'Total de saídas do caixa',
       schema: [{ saldoInicial: 500}]
       } */
-      return res.json({ total: (result?.total || 0) });
+      return res.json({ total: result?.total || 0 });
     } catch (error) {
       console.log(error);
       res.status(400).json(error);
@@ -144,7 +165,7 @@ module.exports = class Caixa {
       description: 'Total de saídas do caixa',
       schema: [{ saldoInicial: 500}]
       } */
-      return res.json({ total: (result.total || 0) });
+      return res.json({ total: result.total || 0 });
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

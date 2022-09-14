@@ -18,8 +18,8 @@ module.exports = class Caixa {
     return await condominio.findOneAndUpdate(filters, data);
   }
 
-  static async getSaldoInicial(filters) {
-    return await condominio.findOne(filters, { saldoInicial: 1 });
+  static async getSaldos(filters) {
+    return await condominio.findOne(filters, { saldoCaixaInicial: 1, saldoCaixaAtual: 1 });
   }
 
 
