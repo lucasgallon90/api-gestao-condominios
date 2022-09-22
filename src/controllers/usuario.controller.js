@@ -254,7 +254,7 @@ module.exports = class Usuario {
       return res.json(result);
     } catch (error) {
       //Duplicate email
-      if (err.code === "11000") {
+      if (error.code === "11000") {
         return res
           .status(400)
           .json({ error: "Email já existe, por favor selecione outro" });
