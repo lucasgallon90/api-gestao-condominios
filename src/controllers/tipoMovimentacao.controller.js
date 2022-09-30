@@ -3,10 +3,16 @@ const { LIMIT } = require("../utils/index.js");
 
 module.exports = class TipoMovimentacao {
   static async list(req, res) {
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     const { user } = req;
     try {
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
+      }
       const results = await tipoMovimentacaoRepository.list({
         filters: { _idCondominio: user._idCondominio, ...filters },
         page,
@@ -35,8 +41,8 @@ module.exports = class TipoMovimentacao {
       $ref: '#/definitions/TipoMovimentacaoResponse'} 
       } */
       return res
-      .status(result ? 200 : 400)
-      .json(result ? result : { error: "Registro não encontrado" });
+        .status(result ? 200 : 400)
+        .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
       res.status(400).json(error);
     }
@@ -81,7 +87,7 @@ module.exports = class TipoMovimentacao {
         .status(result ? 200 : 400)
         .json(result ? tipoMovimentacao : { error: "Registro não encontrado" });
     } catch (error) {
-        res.status(400).json(error);
+      res.status(400).json(error);
     }
   }
   static async remove(req, res) {

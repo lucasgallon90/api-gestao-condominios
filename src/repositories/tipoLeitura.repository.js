@@ -16,7 +16,7 @@ module.exports = class TipoLeitura {
     return await tipoLeitura.findOneAndUpdate(filters, data);
   }
 
-  static async delete({ _id, _idCondominio }) {
-    return await tipoLeitura.deleteOne({ _id, _idCondominio });
+  static async delete(data) {
+    return await tipoLeitura.deleteOne(data);
   }
 };

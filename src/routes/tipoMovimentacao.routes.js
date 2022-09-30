@@ -1,9 +1,9 @@
 const express = require("express");
 const { celebrate, Joi } = require("celebrate");
-Joi.objectId = require('joi-objectid')(Joi)
+Joi.objectId = require("joi-objectid")(Joi);
 const { messages } = require("joi-translation-pt-br");
 const router = express.Router();
-const TipoMovimentacaoDTO = require("../database/dtos/tipoMovimentacao.dto.js")
+const TipoMovimentacaoDTO = require("../database/dtos/tipoMovimentacao.dto.js");
 const {
   list,
   get,
@@ -11,6 +11,7 @@ const {
   create,
   update,
 } = require("../controllers/tipoMovimentacao.controller");
+const { LIMIT } = require("../utils/index.js");
 
 router.post(
   "/list",
@@ -24,7 +25,10 @@ router.post(
       body: Joi.object().keys({
         descricao: Joi.string().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional() }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -59,7 +63,8 @@ router.post(
     },
     {
       messages: messages,
-    }),
+    }
+  ),
   /* #swagger.tags = ['Tipos de Movimentacão']
     #swagger.parameters['body'] = {
                   in: 'body',

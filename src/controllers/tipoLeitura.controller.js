@@ -3,13 +3,19 @@ const { LIMIT } = require("../utils/index.js");
 
 module.exports = class TipoLeitura {
   static async list(req, res) {
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     const { user } = req;
     try {
       let paginate = {};
       if (page && limit) {
         paginate = { skip: limit * (page - 1), limit };
+      }
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
       }
       const results = await tipoLeituraRepository.list({
         filters: { _idCondominio: user._idCondominio, ...filters },
@@ -22,6 +28,7 @@ module.exports = class TipoLeitura {
       } */
       return res.json(results);
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }
@@ -90,9 +97,13 @@ module.exports = class TipoLeitura {
     }
   }
   static async remove(req, res) {
+    const { user } = req;
     const { id } = req.params;
     try {
-      const result = await tipoLeituraRepository.delete({ _id: id });
+      const result = await tipoLeituraRepository.delete({
+        _id: id,
+        _idCondominio: user._idCondominio,
+      });
       /* #swagger.responses[200] = {
       description: 'Tipo de Leitura deletada com sucesso',
       schema: { message: "Tipo de Leitura deletada com sucesso" }

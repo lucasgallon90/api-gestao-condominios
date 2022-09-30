@@ -4,12 +4,18 @@ const { LIMIT } = require("../utils/index.js");
 module.exports = class Leitura {
   static async list(req, res) {
     const { user } = req;
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     try {
       let paginate = {};
       if (page && limit) {
         paginate = { skip: limit * (page - 1), limit };
+      }
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
       }
       const results = await leituraRepository.list({
         filters: { _idCondominio: user._idCondominio, ...filters },
