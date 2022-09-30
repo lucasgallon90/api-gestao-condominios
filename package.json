@@ -30,6 +30,7 @@
     "express-session": "^1.17.2",
     "helmet": "^3.22.0",
     "jest": "^27.5.1",
+    "jest-html-reporter": "^3.7.0",
     "joi": "^17.5.0",
     "joi-objectid": "^4.0.2",
     "joi-translation-pt-br": "0.0.6",

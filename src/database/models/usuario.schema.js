@@ -15,7 +15,7 @@ const UsuarioSchema = new mongoose.Schema(
       enum: ["admin", "superAdmin", "morador"],
     },
     ativo: { type: Boolean, require: true, default: true },
-    _idCondominio: { type: mongoose.Types.ObjectId, require: true },
+    _idCondominio: { type: mongoose.Types.ObjectId, require: true, default: null },
   },
   { timestamps: true, versionKey: false }
 );

@@ -2598,7 +2598,6 @@
         }
       }
     },
-    
     "/v1/condominios/list": {
       "post": {
         "tags": [
@@ -3260,6 +3259,22 @@
           "type": "number",
           "example": 101.1
         },
+        "taxaFixa": {
+          "type": "number",
+          "example": 10
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 7.5
+        },
+        "valor": {
+          "type": "number",
+          "example": 32.25
+        },
+        "valorTotal": {
+          "type": "number",
+          "example": 42.25
+        },
         "_idTipoLeitura": {
           "type": "string",
           "example": "61fc6aa5b49ec355ca0300b4"
@@ -3295,6 +3310,22 @@
         "leituraAnterior": {
           "type": "number",
           "example": 101.1
+        },
+        "taxaFixa": {
+          "type": "number",
+          "example": 10
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 7.5
+        },
+        "valor": {
+          "type": "number",
+          "example": 32.25
+        },
+        "valorTotal": {
+          "type": "number",
+          "example": 42.25
         },
         "tipoLeitura": {
           "type": "object",
