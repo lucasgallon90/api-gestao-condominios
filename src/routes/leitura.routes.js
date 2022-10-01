@@ -1,16 +1,18 @@
 var express = require("express");
 var router = express.Router();
 const { celebrate, Joi } = require("celebrate");
-Joi.objectId = require('joi-objectid')(Joi)
+Joi.objectId = require("joi-objectid")(Joi);
 const { messages } = require("joi-translation-pt-br");
-const LeituraDTO = require("../database/dtos/leitura.dto.js")
+const LeituraDTO = require("../database/dtos/leitura.dto.js");
 const {
   list,
   get,
   remove,
   create,
   update,
+  getLeituraAnterior,
 } = require("../controllers/leitura.controller");
+const { LIMIT } = require("../utils/index.js");
 
 router.post(
   "/list",
@@ -21,7 +23,10 @@ router.post(
         mesAno: Joi.string().optional(),
         _idTipoLeitura: Joi.string().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional() }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -36,6 +41,13 @@ router.post(
   #swagger.parameters['page'] = { in: 'query', description: 'Paginação', type: 'number',  schema: {
           page: 1,
       }}
+#swagger.parameters['limit'] = {
+  in: 'query',
+  description: 'Limite de registros',
+  schema: {
+      limit:1,
+  }
+}
     */
   list
 );
@@ -56,6 +68,24 @@ router.get(
     }
   ),
   get
+);
+
+router.get(
+  "/leitura-anterior/:idUsuario",
+  /* #swagger.tags = ['Leitura']
+   #swagger.parameters['id'] = {  in: 'path', description: 'id do Usuário', type: 'string', required:true }
+    */
+  celebrate(
+    {
+      params: Joi.object().keys({
+        idUsuario: Joi.objectId().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  getLeituraAnterior
 );
 
 router.post(

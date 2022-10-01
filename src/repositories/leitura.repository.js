@@ -1,11 +1,11 @@
 const leitura = require("../database/models/leitura.schema.js");
 
 module.exports = class Leitura {
-  static async list({ filters, paginate }) {
-    return await leitura.find( filters, { }, paginate);
+  static async list(filters) {
+    return await leitura.aggregate(filters);
   }
   static async get(data) {
-    return await leitura.findOne(data);
+    return await leitura.aggregate(data);
   }
 
   static async create(data) {
@@ -16,7 +16,7 @@ module.exports = class Leitura {
     return await leitura.findOneAndUpdate(filters, data);
   }
 
-  static async delete({_id, _idCondominio}) {
-    await ocorrencia.deleteOne({ _id, _idCondominio });
+  static async delete(filters) {
+    await leitura.deleteOne(filters);
   }
 };

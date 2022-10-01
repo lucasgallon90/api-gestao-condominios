@@ -1,5 +1,6 @@
 const leituraRepository = require("../repositories/leitura.repository.js");
 const { LIMIT } = require("../utils/index.js");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Leitura {
   static async list(req, res) {
@@ -9,18 +10,69 @@ module.exports = class Leitura {
     try {
       let paginate = {};
       if (page && limit) {
-        paginate = { skip: limit * (page - 1), limit };
+        paginate = [
+          { $skip: limit * (page - 1) },
+          { $limit: limit },
+          { $sort: { createdAt: -1 } },
+        ];
       }
-      if (Object.keys(filters).length > 0) {
-        Object.keys(filters).map(
-          (key) =>
-            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
-        );
+      filters.mesAno &&
+        (filters.createdAt = {
+          $gte: moment(filters.mesAno + "-01")
+            .startOf("month")
+            .toDate(),
+          $lte: moment(filters.mesAno + "-01")
+            .endOf("month")
+            .toDate(),
+        });
+      let afterLookupFilter = null;
+      if (filters.nomeMorador) {
+        afterLookupFilter = {
+          $match: {
+            "morador.nome": { $regex: `.*${filters.nomeMorador}.*` },
+          },
+        };
+        delete filters.nomeMorador;
       }
-      const results = await leituraRepository.list({
-        filters: { _idCondominio: user._idCondominio, ...filters },
-        paginate,
-      });
+
+      let pipeline = [
+        {
+          $match: { _idCondominio: ObjectId(user._idCondominio), ...filters },
+        },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioLeitura",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "tiposleitura",
+            localField: "_idTipoLeitura",
+            foreignField: "_id",
+            as: "tipoLeitura",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoLeitura",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        ...paginate,
+      ];
+      if (afterLookupFilter) {
+        pipeline.push(afterLookupFilter);
+      }
+      const results = await leituraRepository.list(pipeline);
       /* #swagger.responses[200] = {
       description: 'Leituras listadas com sucesso',
       schema: [{ $ref: '#/definitions/LeituraResponse'}]
@@ -35,8 +87,42 @@ module.exports = class Leitura {
     const { user } = req;
     const { id } = req.params;
     try {
-      const filters = { _id: id, _idCondominio: user._idCondominio };
-      const result = await leituraRepository.get(filters);
+      const [result] = await leituraRepository.get([
+        {
+          $match: {
+            _id: ObjectId(id),
+            _idCondominio: ObjectId(user._idCondominio),
+          },
+        },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioLeitura",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "tiposleitura",
+            localField: "_idTipoLeitura",
+            foreignField: "_id",
+            as: "tipoLeitura",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoLeitura",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ]);
       /* #swagger.responses[200] = {
       description: 'Leitura obtida com sucesso',
       schema: { 
@@ -49,6 +135,62 @@ module.exports = class Leitura {
       res.status(400).json(error);
     }
   }
+
+  static async getLeituraAnterior(req, res) {
+    const { user } = req;
+    const { idUsuario } = req.params;
+    try {
+      const [result] = await leituraRepository.get([
+        {
+          $match: {
+            _idUsuarioLeitura: ObjectId(idUsuario),
+            _idCondominio: ObjectId(user._idCondominio),
+          },
+        },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioLeitura",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "tiposleitura",
+            localField: "_idTipoLeitura",
+            foreignField: "_id",
+            as: "tipoLeitura",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoLeitura",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        { $sort: { mesAno: -1 } },
+        { $limit: 1 },
+      ]);
+      /* #swagger.responses[200] = {
+      description: 'Leitura obtida com sucesso',
+      schema: { 
+      $ref: '#/definitions/LeituraResponse'} 
+      } */
+      return res
+        .status(result ? 200 : 400)
+        .json(result ? result : { error: "Registro não encontrado" });
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  }
+
   static async create(req, res) {
     const leitura = req.body;
     const { user } = req;
@@ -116,6 +258,7 @@ module.exports = class Leitura {
       }
       return res.json({ message: "Leitura deletada com sucesso" });
     } catch (error) {
+      console.log(error)
       res.status(400).json(error);
     }
   }
