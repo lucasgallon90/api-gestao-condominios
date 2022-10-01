@@ -16,7 +16,7 @@ module.exports = class Leitura {
     return await leitura.findOneAndUpdate(filters, data);
   }
 
-  static async delete({_id, _idCondominio}) {
-    await ocorrencia.deleteOne({ _id, _idCondominio });
+  static async delete(filters) {
+    await leitura.deleteOne(filters);
   }
 };
