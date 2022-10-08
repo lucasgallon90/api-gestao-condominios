@@ -62,6 +62,7 @@ module.exports = class Movimentacao {
         {
           $match: {
             dataVencimento: { $gte: startOfMonth, $lte: endOfMonth },
+            ratear: true,
             _idCondominio: ObjectId(user._idCondominio),
           },
         },
