@@ -8,11 +8,15 @@ module.exports = class Leitura {
     return await leitura.aggregate(data);
   }
 
+  static async findUnique(data) {
+    return await leitura.findOne(data);
+  }
+
   static async create(data) {
     return await leitura.create(data);
   }
 
-  static async update({filters, data}) {
+  static async update({ filters, data }) {
     return await leitura.findOneAndUpdate(filters, data);
   }
 

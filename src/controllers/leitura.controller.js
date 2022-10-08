@@ -1,3 +1,4 @@
+const moment = require("moment/moment.js");
 const leituraRepository = require("../repositories/leitura.repository.js");
 const { LIMIT } = require("../utils/index.js");
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -16,15 +17,6 @@ module.exports = class Leitura {
           { $sort: { createdAt: -1 } },
         ];
       }
-      filters.mesAno &&
-        (filters.createdAt = {
-          $gte: moment(filters.mesAno + "-01")
-            .startOf("month")
-            .toDate(),
-          $lte: moment(filters.mesAno + "-01")
-            .endOf("month")
-            .toDate(),
-        });
       let afterLookupFilter = null;
       if (filters.nomeMorador) {
         afterLookupFilter = {
@@ -183,9 +175,7 @@ module.exports = class Leitura {
       schema: { 
       $ref: '#/definitions/LeituraResponse'} 
       } */
-      return res
-        .status(result ? 200 : 400)
-        .json(result ? result : { error: "Registro não encontrado" });
+      return res.json(result);
     } catch (error) {
       res.status(400).json(error);
     }
@@ -195,7 +185,7 @@ module.exports = class Leitura {
     const leitura = req.body;
     const { user } = req;
     try {
-      const leituraUnicaMesAno = await leituraRepository.get({
+      const leituraUnicaMesAno = await leituraRepository.findUnique({
         _idTipoLeitura: leitura._idTipoLeitura,
         _idUsuarioLeitura: leitura._idUsuarioLeitura,
         _idCondominio: user._idCondominio,
@@ -218,6 +208,7 @@ module.exports = class Leitura {
       } */
       return res.json(result);
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }
@@ -258,7 +249,7 @@ module.exports = class Leitura {
       }
       return res.json({ message: "Leitura deletada com sucesso" });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(400).json(error);
     }
   }
