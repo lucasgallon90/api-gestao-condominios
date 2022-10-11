@@ -4,8 +4,8 @@ module.exports = class Leitura {
   static async list(filters) {
     return await leitura.aggregate(filters);
   }
-  static async get(data) {
-    return await leitura.aggregate(data);
+  static async get(filters) {
+    return await leitura.aggregate(filters);
   }
 
   static async findUnique(data) {

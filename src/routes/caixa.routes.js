@@ -9,6 +9,7 @@ const {
   getTotalSaidas,
   getTotalEntradas,
 } = require("../controllers/caixa.controller");
+const { LIMIT } = require("../utils");
 
 router.post(
   "/consolidado",
@@ -17,7 +18,10 @@ router.post(
       params: Joi.object().keys({
         dataPagamento: Joi.string().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional() }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -30,6 +34,13 @@ router.post(
      #swagger.parameters['page'] = { in: 'query', description: 'Paginação', type: 'number',  schema: {
           page: 1,
       }}
+     #swagger.parameters['limit'] = {
+  in: 'query',
+  description: 'Limite de registros',
+  schema: {
+      limit:1,
+  }
+}
       */
   list
 );

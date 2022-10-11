@@ -8,27 +8,53 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Movimentacao {
   static async list(req, res) {
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     const { user } = req;
     try {
-      if (user.tipoUsuario != "admin") {
-        filters._idUsuarioOcorrencia = user._id;
-      }
       let paginate = {};
       if (page && limit) {
-        paginate = { skip: limit * (page - 1), limit };
+        paginate = [
+          { $skip: limit * (page - 1) },
+          { $limit: limit },
+          { $sort: { createdAt: -1 } },
+        ];
       }
-      const results = await movimentacaoRepository.list({
-        filters: { _idCondominio: user._idCondominio, ...filters },
-        paginate,
-      });
+      if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
+      }
+
+      let pipeline = [
+        {
+          $match: { _idCondominio: ObjectId(user._idCondominio), ...filters },
+        },
+        {
+          $lookup: {
+            from: "tiposmovimentacao",
+            localField: "_idTipoMovimentacao",
+            foreignField: "_id",
+            as: "tipoMovimentacao",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoMovimentacao",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        ...paginate,
+      ];
+      const results = await movimentacaoRepository.list(pipeline);
       /* #swagger.responses[200] = {
       description: 'Movimentações listadas com sucesso',
       schema: [{ $ref: '#/definitions/MovimentacaoResponse'}]
       } */
       return res.json(results);
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }
@@ -36,9 +62,26 @@ module.exports = class Movimentacao {
     const { user } = req;
     const { id } = req.params;
     try {
-      const data = { _id: id, _idCondominio: user._idCondominio };
-
-      const result = await movimentacaoRepository.get(data);
+      let pipeline = [
+        {
+          $match: { _idCondominio: ObjectId(user._idCondominio), _id: ObjectId(id) },
+        },
+        {
+          $lookup: {
+            from: "tiposmovimentacao",
+            localField: "_idTipoMovimentacao",
+            foreignField: "_id",
+            as: "tipoMovimentacao",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoMovimentacao",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ];
+      const [result] = await movimentacaoRepository.get(pipeline);
       /* #swagger.responses[200] = {
       description: 'Movimentação obtida com sucesso',
       schema: { 
@@ -48,6 +91,7 @@ module.exports = class Movimentacao {
         .status(result ? 200 : 400)
         .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }
@@ -241,19 +285,19 @@ module.exports = class Movimentacao {
       if (!result) {
         return res.status(400).json({ error: "Registro não encontrado" });
       } else {
-        const tipoMovimentacao = await tipoMovimentacaoRepository.get({
-          _idCondominio: user._idCondominio,
-          _id: movimentacao._idTipoMovimentacao,
-        });
-        await condominioRepository.update({
-          _id: user._idCondominio,
-          $inc: {
-            saldoCaixaAtual:
-              tipoMovimentacao.tipo === "E"
-                ? -movimentacao.valor
-                : movimentacao.valor,
-          },
-        });
+        if (result.dataPagamento) {
+          const tipoMovimentacao = await tipoMovimentacaoRepository.get({
+            _idCondominio: user._idCondominio,
+            _id: result._idTipoMovimentacao,
+          });
+          await condominioRepository.update({
+            _id: user._idCondominio,
+            $inc: {
+              saldoCaixaAtual:
+                tipoMovimentacao.tipo === "E" ? -result.valor : result.valor,
+            },
+          });
+        }
       }
       return res.json({ message: "Movimentação deletada com sucesso" });
     } catch (error) {

@@ -5,8 +5,8 @@ module.exports = class Usuario {
   static async list(filters) {
     return await usuario.aggregate(filters);
   }
-  static async get(pipeline) {
-    return await usuario.aggregate(pipeline);
+  static async get(filters) {
+    return await usuario.aggregate(filters);
   }
 
   static async getTotal() {

@@ -1,12 +1,12 @@
 const movimentacao = require("../database/models/movimentacao.schema.js");
 
 module.exports = class Movimentacao {
-  static async list({ filters, paginate }) {
-    return await movimentacao.find(filters, {}, paginate);
+  static async list(filters) {
+    return await movimentacao.aggregate(filters);
   }
 
   static async get(filters) {
-    return await movimentacao.findOne(filters);
+    return await movimentacao.aggregate(filters);
   }
 
   static async getContasMesAno(filters) {
@@ -22,6 +22,6 @@ module.exports = class Movimentacao {
   }
 
   static async delete({ _id, _idCondominio }) {
-    return await movimentacao.deleteOne({ _id, _idCondominio });
+    return await movimentacao.findOneAndDelete({ _id, _idCondominio });
   }
 };
