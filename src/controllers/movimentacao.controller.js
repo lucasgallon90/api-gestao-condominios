@@ -105,7 +105,6 @@ module.exports = class Movimentacao {
       const data = moment(mesAno + "-01");
       const startOfMonth = moment(data).startOf("month").toDate();
       const endOfMonth = moment(data).endOf("month").toDate();
-
       const filters = [
         {
           $match: {

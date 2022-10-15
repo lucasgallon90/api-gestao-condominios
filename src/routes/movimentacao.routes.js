@@ -77,12 +77,14 @@ router.post(
   /* #swagger.tags = ['Movimentação']
     #swagger.parameters['body'] = { in: 'body', description: 'Parâmetros para obter as contas a serem rateadas e suas referidas leituras do mês/ano para gerar uma cobrança', type: 'string',  schema: {
                       $mesAno: '2022-03',
+                      $_idUsuario: '61fc6aa5b49ec355ca0300b4',
                   }}
     */
   celebrate(
     {
       body: Joi.object().keys({
-        mesAno: Joi.string().length(7).required()
+        mesAno: Joi.string().length(7).required(),
+        _idUsuario: Joi.objectId().required(),
       }),
     },
     {
