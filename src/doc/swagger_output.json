@@ -1,0 +1,3876 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Gestão de Condomínios",
+    "description": "Documentação API - Gestão de Condomínios",
+    "version": "1.0.0"
+  },
+  "host": "gestao-de-condominios.herokuapp.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/v1/auth/login/local": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário - Email",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "joaquim@gestaodecondominios.com.br"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "123"
+                }
+              },
+              "required": [
+                "email",
+                "senha"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/auth/login/google": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/v1/auth/register/google": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/v1/auth/login/google/callback": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/v1/auth/register/google/callback": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Registrar usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Olavo M."
+                },
+                "email": {
+                  "type": "string",
+                  "example": "olavo@mockgestaocondominios.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "123"
+                },
+                "telefone": {
+                  "type": "string",
+                  "example": "51900000000"
+                },
+                "apto": {
+                  "type": "string",
+                  "example": "201"
+                },
+                "bloco": {
+                  "type": "string",
+                  "example": "A"
+                },
+                "googleId": {
+                  "type": "string",
+                  "example": "18098ca98s7c89a7sc7123"
+                }
+              },
+              "required": [
+                "nome",
+                "senha",
+                "apto"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/v1/auth/authenticate": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "Autenticar usuário (Refresh Token)",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/auth/user-info": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "description": "Dados do usuário logado",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/list/moradores": {
+      "post": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Joaquim"
+                },
+                "nomeCondominio": {
+                  "type": "string",
+                  "example": "Frei João II"
+                },
+                "apto": {
+                  "type": "string",
+                  "example": "401"
+                },
+                "bloco": {
+                  "type": "string",
+                  "example": "A"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "joaquim@gestaodecondominios.com.br"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuários listados com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UsuarioResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/moradores/{id}": {
+      "get": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário obtido com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/moradores/update/{id}": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Morador atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/moradores/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Morador deletado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Morador deletado com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/update-usuario-logado": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Joaquim"
+                },
+                "apto": {
+                  "type": "string",
+                  "example": "401"
+                },
+                "bloco": {
+                  "type": "string",
+                  "example": "A"
+                },
+                "telefone": {
+                  "type": "string",
+                  "example": "54 990000000"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "joaquim@gestaodecondominios.com.br"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioLogadoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/list": {
+      "post": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Joaquim"
+                },
+                "nomeCondominio": {
+                  "type": "string",
+                  "example": "Frei João II"
+                },
+                "apto": {
+                  "type": "string",
+                  "example": "401"
+                },
+                "bloco": {
+                  "type": "string",
+                  "example": "A"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "joaquim@gestaodecondominios.com.br"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuários listados com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UsuarioResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/{id}": {
+      "get": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário obtido com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/count/total": {
+      "get": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de usuários obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/create": {
+      "post": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar usuário",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário criado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/update/{id}": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Usuário",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/UsuarioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/update-senha": {
+      "put": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Nova senha",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "novaSenha": {
+                  "type": "string",
+                  "example": "123"
+                }
+              },
+              "required": [
+                "novaSenha"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Senha alterada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Senha alterada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/usuarios/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Usuário"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário deletado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Usuário deletado com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/list": {
+      "post": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limite de registros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                  "example": "2022-03-01"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Problema"
+                },
+                "situacao": {
+                  "type": "string",
+                  "example": "Aberta"
+                },
+                "nomeMorador": {
+                  "type": "string",
+                  "example": "Morador"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ocorrências listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OcorrenciaResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/{id}": {
+      "get": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id da Ocorrência"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ocorrência obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/OcorrenciaResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/count/total": {
+      "get": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de ocorrências obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/create": {
+      "post": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Ocorrência",
+            "schema": {
+              "$ref": "#/definitions/Ocorrencia"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ocorrência criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/OcorrenciaResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/update/{id}": {
+      "put": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Ocorrência",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Ocorrência",
+            "schema": {
+              "$ref": "#/definitions/Ocorrencia"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ocorrência atualizada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/OcorrenciaResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/ocorrencias/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Ocorrência"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Ocorrência"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ocorrência deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Ocorrência deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/list": {
+      "post": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                  "example": "2022-01-01"
+                },
+                "descricao": {
+                  "type": "string",
+                  "example": "Conta de Luz Março/2022"
+                },
+                "dataVencimento": {
+                  "type": "string",
+                  "example": "2022-03-28"
+                },
+                "dataPagamento": {
+                  "type": "string",
+                  "example": "2022-03-28"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentações listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MovimentacaoResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/{id}": {
+      "get": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id da Movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/MovimentacaoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/contas-rateio": {
+      "post": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Parâmetros para obter as contas a serem rateadas e suas referidas leituras do mês/ano para gerar uma cobrança",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mesAno": {
+                  "type": "string",
+                  "example": "2022-03"
+                },
+                "_idUsuario": {
+                  "type": "string",
+                  "example": "61fc6aa5b49ec355ca0300b4"
+                }
+              },
+              "required": [
+                "mesAno",
+                "_idUsuario"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contas e suas referidas leituras/rateios do mês/ano obtidas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContaResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/create": {
+      "post": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Movimentação",
+            "schema": {
+              "$ref": "#/definitions/Movimentacao"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/MovimentacaoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/update/{id}": {
+      "put": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id da Movimentação",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Movimentação",
+            "schema": {
+              "$ref": "#/definitions/Movimentacao"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/movimentacoes/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Movimentação"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Movimentação deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/caixa/consolidado": {
+      "post": {
+        "tags": [
+          "Caixa"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataPagamento": {
+                  "type": "string",
+                  "example": "2022-01-01"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caixa listado com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CaixaResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/caixa/saldo-inicial": {
+      "put": {
+        "tags": [
+          "Caixa"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Saldo inicial do caixa",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "saldoInicial": {
+                  "type": "number",
+                  "example": 500
+                }
+              },
+              "required": [
+                "saldoInicial"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saldo inicial do caixa atualizado com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "saldoInicial": {
+                    "type": "number",
+                    "example": 500
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/caixa/saldo-atual": {
+      "get": {
+        "tags": [
+          "Caixa"
+        ],
+        "description": "Saldo atual do caixa",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saldo atual do caixa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "saldoCaixaAtual": {
+                    "type": "number",
+                    "example": 500
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/caixa/total-saidas": {
+      "get": {
+        "tags": [
+          "Caixa"
+        ],
+        "description": "Total de saídas",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de saídas do caixa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "saldoInicial": {
+                    "type": "number",
+                    "example": 500
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/caixa/total-entradas": {
+      "get": {
+        "tags": [
+          "Caixa"
+        ],
+        "description": "Total de entradas",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de saídas do caixa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "saldoInicial": {
+                    "type": "number",
+                    "example": 500
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/cobrancas/list": {
+      "post": {
+        "tags": [
+          "Cobrança"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                  "example": "2022-03-01"
+                },
+                "descricao": {
+                  "type": "string",
+                  "example": "Condominio Março/2022 Apto 402"
+                },
+                "dataVencimento": {
+                  "type": "string",
+                  "example": "2022-03-28"
+                },
+                "dataPagamento": {
+                  "type": "string",
+                  "example": "2022-03-28"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cobranças listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CobrancaResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/cobrancas/{id}": {
+      "get": {
+        "tags": [
+          "Cobrança"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id da Cobrança"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cobrança obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/CobrancaResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/cobrancas/create": {
+      "post": {
+        "tags": [
+          "Cobrança"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Cobrança",
+            "schema": {
+              "$ref": "#/definitions/Cobranca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cobrança criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/CobrancaResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/cobrancas/update/{id}": {
+      "put": {
+        "tags": [
+          "Cobrança"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id da Cobrança",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Cobrança",
+            "schema": {
+              "$ref": "#/definitions/Cobranca"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/cobrancas/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Cobrança"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Cobrança"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cobrança deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Cobrança deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/leituras/list": {
+      "post": {
+        "tags": [
+          "Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "morador": {
+                  "type": "string",
+                  "example": "Joaquim"
+                },
+                "mesAno": {
+                  "type": "string",
+                  "example": "2022-03"
+                },
+                "_idTipoLeitura": {
+                  "type": "string",
+                  "example": "61fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leituras listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LeituraResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/leituras/{id}": {
+      "get": {
+        "tags": [
+          "Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do Leitura"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leitura obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/LeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/leituras/create": {
+      "post": {
+        "tags": [
+          "Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Leitura",
+            "schema": {
+              "$ref": "#/definitions/Leitura"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leitura criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/LeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/leituras/update/{id}": {
+      "put": {
+        "tags": [
+          "Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id da Leitura",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Leitura",
+            "schema": {
+              "$ref": "#/definitions/Leitura"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leitura atualizada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/LeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/leituras/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Leitura"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leitura deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Leitura deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-leitura/list": {
+      "post": {
+        "tags": [
+          "Tipos de Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "descricao": {
+                  "type": "string",
+                  "example": "Luz"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de Leitura listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TipoLeituraResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-leitura/{id}": {
+      "get": {
+        "tags": [
+          "Tipos de Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do Tipo de Leitura"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de Leitura obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/TipoLeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-leitura/create": {
+      "post": {
+        "tags": [
+          "Tipos de Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Tipos de Leitura",
+            "schema": {
+              "$ref": "#/definitions/TipoLeitura"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipo de Leitura criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/TipoLeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-leitura/update/{id}": {
+      "put": {
+        "tags": [
+          "Tipos de Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Tipo de Leitura",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Tipos de Leitura",
+            "schema": {
+              "$ref": "#/definitions/TipoLeitura"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de Leitura atualizada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/TipoLeituraResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-leitura/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Tipos de Leitura"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Tipos de Leitura"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipo de Leitura deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Tipo de Leitura deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-movimentacao/list": {
+      "post": {
+        "tags": [
+          "Tipos de Movimentacão"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "descricao": {
+                  "type": "string",
+                  "example": "Cobrança"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de Movimentação listadas com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TipoMovimentacaoResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-movimentacao/{id}": {
+      "get": {
+        "tags": [
+          "Tipos de Movimentacão"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do Tipo de Movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de Movimentação obtida com sucesso",
+            "schema": {
+              "$ref": "#/definitions/TipoMovimentacaoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-movimentacao/create": {
+      "post": {
+        "tags": [
+          "Tipos de Movimentacão"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Tipos de Movimentacão",
+            "schema": {
+              "$ref": "#/definitions/TipoMovimentacao"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipo de Movimentação criada com sucesso",
+            "schema": {
+              "$ref": "#/definitions/TipoMovimentacaoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/tipos-movimentacao/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Tipos de Movimentacão"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Tipos de Movimentacão"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipo de Movimentação deletada com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Tipo de Movimentação deletada com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/list": {
+      "post": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Paginação",
+            "type": "number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Filtros",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Frei João II"
+                },
+                "endereco": {
+                  "type": "string",
+                  "example": "Rua Joaquim Barbosa, 120, Centro"
+                },
+                "cidade": {
+                  "type": "string",
+                  "example": "Porto Alegre"
+                },
+                "uf": {
+                  "type": "string",
+                  "example": "RS"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Condomínios listados com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CondominioResponse"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/{id}": {
+      "get": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id do Condomínio"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Condomínio obtido com sucesso",
+            "schema": {
+              "$ref": "#/definitions/CondominioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/{codigo}": {
+      "get": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "codigo",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Código do Condomínio (Utilizado no cadastro de novos usuários do condomínio)"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Condomínio obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "61fc6aa5b49ec355ca0300b4"
+                },
+                "nome": {
+                  "type": "string",
+                  "example": "Edifício Frei Paolo II"
+                },
+                "codigo": {
+                  "type": "string",
+                  "example": "Edifício Frei Paolo II"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/count/total": {
+      "get": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de condomínios obtido com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/create": {
+      "post": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Adicionar Condomínio",
+            "schema": {
+              "$ref": "#/definitions/Condominio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Condomínio criado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/CondominioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/update/{id}": {
+      "put": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "params",
+            "description": "Id do Condomínio",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "41fc6aa5b49ec355ca0300b4"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Alterar Condomínio",
+            "schema": {
+              "$ref": "#/definitions/Condominio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Condomínio atualizado com sucesso",
+            "schema": {
+              "$ref": "#/definitions/CondominioResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/condominios/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Condomínio"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Deletar Condomínio"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro deletado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Condomínio deletado com sucesso"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Usuario": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Olavo M."
+        },
+        "email": {
+          "type": "string",
+          "example": "olavo@mockgestaocondominios.com"
+        },
+        "senha": {
+          "type": "string",
+          "example": "123"
+        },
+        "telefone": {
+          "type": "string",
+          "example": "51900000000"
+        },
+        "apto": {
+          "type": "string",
+          "example": "201"
+        },
+        "bloco": {
+          "type": "string",
+          "example": "A"
+        },
+        "tipoUsuario": {
+          "type": "string",
+          "example": "admin"
+        },
+        "ativo": {
+          "type": "boolean",
+          "example": true
+        },
+        "googleId": {
+          "type": "string",
+          "example": "18098ca98s7c89a7sc7123"
+        },
+        "_idCondominio": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        }
+      },
+      "required": [
+        "nome",
+        "email",
+        "senha",
+        "apto",
+        "tipoUsuario",
+        "_idCondominio"
+      ]
+    },
+    "UsuarioResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "nome": {
+          "type": "string",
+          "example": "Olavo M."
+        },
+        "email": {
+          "type": "string",
+          "example": "olavo@mockgestaocondominios.com"
+        },
+        "telefone": {
+          "type": "string",
+          "example": "51900000000"
+        },
+        "apto": {
+          "type": "string",
+          "example": "201"
+        },
+        "bloco": {
+          "type": "string",
+          "example": "A"
+        },
+        "tipoUsuario": {
+          "type": "string",
+          "example": "admin"
+        },
+        "ativo": {
+          "type": "boolean",
+          "example": true
+        },
+        "googleId": {
+          "type": "string",
+          "example": "18098ca98s7c89a7sc7123"
+        },
+        "_idCondominio": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "condominio": {
+          "type": "object",
+          "properties": {
+            "nome": {
+              "type": "string",
+              "example": "Edifício Frei Paolo II"
+            },
+            "endereco": {
+              "type": "string",
+              "example": "Rua Joaquim Barbosa, 120, Centro"
+            },
+            "cidade": {
+              "type": "string",
+              "example": "Porto Alegre"
+            },
+            "uf": {
+              "type": "string",
+              "example": "RS"
+            },
+            "cep": {
+              "type": "string",
+              "example": "91000000"
+            },
+            "codigoCondominio": {
+              "type": "string",
+              "example": "freipaolo"
+            }
+          },
+          "required": [
+            "nome",
+            "endereco",
+            "cidade",
+            "uf",
+            "cep",
+            "codigoCondominio"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      },
+      "required": [
+        "nome",
+        "email",
+        "apto",
+        "tipoUsuario",
+        "_idCondominio"
+      ]
+    },
+    "UsuarioLogadoResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "61fc6aa5b49ec355ca0300b4"
+            },
+            "nome": {
+              "type": "string",
+              "example": "Olavo M."
+            },
+            "email": {
+              "type": "string",
+              "example": "olavo@mockgestaocondominios.com"
+            },
+            "telefone": {
+              "type": "string",
+              "example": "51900000000"
+            },
+            "apto": {
+              "type": "string",
+              "example": "201"
+            },
+            "bloco": {
+              "type": "string",
+              "example": "A"
+            },
+            "_idCondominio": {
+              "type": "string",
+              "example": "61fc6aa5b49ec355ca0300b4"
+            }
+          }
+        },
+        "token": {
+          "type": "string",
+          "example": "jwt token"
+        }
+      }
+    },
+    "Condominio": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Edifício Frei Paolo II"
+        },
+        "endereco": {
+          "type": "string",
+          "example": "Rua Joaquim Barbosa, 120, Centro"
+        },
+        "cidade": {
+          "type": "string",
+          "example": "Porto Alegre"
+        },
+        "uf": {
+          "type": "string",
+          "example": "RS"
+        },
+        "cep": {
+          "type": "string",
+          "example": "91000000"
+        },
+        "saldoCaixaInicial": {
+          "type": "number",
+          "example": 1540
+        },
+        "saldoCaixaAtual": {
+          "type": "number",
+          "example": 1800
+        },
+        "codigoCondominio": {
+          "type": "string",
+          "example": "freipaolo"
+        },
+        "ativo": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "nome",
+        "endereco",
+        "cidade",
+        "uf",
+        "cep",
+        "codigoCondominio"
+      ]
+    },
+    "CondominioResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "nome": {
+          "type": "string",
+          "example": "Edifício Frei Paolo II"
+        },
+        "endereco": {
+          "type": "string",
+          "example": "Rua Joaquim Barbosa, 120, Centro"
+        },
+        "cidade": {
+          "type": "string",
+          "example": "Porto Alegre"
+        },
+        "uf": {
+          "type": "string",
+          "example": "RS"
+        },
+        "cep": {
+          "type": "string",
+          "example": "91000000"
+        },
+        "saldoCaixaInicial": {
+          "type": "number",
+          "example": 1540
+        },
+        "saldoCaixaAtual": {
+          "type": "number",
+          "example": 1800
+        },
+        "codigoCondominio": {
+          "type": "string",
+          "example": "freipaolo"
+        },
+        "ativo": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      },
+      "required": [
+        "_id"
+      ]
+    },
+    "Leitura": {
+      "type": "object",
+      "properties": {
+        "_idMorador": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "leituraAtual": {
+          "type": "number",
+          "example": 105.4
+        },
+        "leituraAnterior": {
+          "type": "number",
+          "example": 101.1
+        },
+        "taxaFixa": {
+          "type": "number",
+          "example": 10
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 7.5
+        },
+        "valor": {
+          "type": "number",
+          "example": 32.25
+        },
+        "valorTotal": {
+          "type": "number",
+          "example": 42.25
+        },
+        "_idTipoLeitura": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "mesAno": {
+          "type": "string",
+          "example": "2022-03"
+        }
+      },
+      "required": [
+        "_idMorador",
+        "leituraAtual",
+        "leituraAnterior",
+        "_idTipoLeitura",
+        "mesAno"
+      ]
+    },
+    "LeituraResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "_idMorador": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "leituraAtual": {
+          "type": "number",
+          "example": 105.4
+        },
+        "leituraAnterior": {
+          "type": "number",
+          "example": 101.1
+        },
+        "taxaFixa": {
+          "type": "number",
+          "example": 10
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 7.5
+        },
+        "valor": {
+          "type": "number",
+          "example": 32.25
+        },
+        "valorTotal": {
+          "type": "number",
+          "example": 42.25
+        },
+        "tipoLeitura": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "61fc6aa5b49ec355ca0300b4"
+            },
+            "descricao": {
+              "type": "string",
+              "example": "Água"
+            },
+            "valorUnidade": {
+              "type": "number",
+              "example": 0.6
+            },
+            "taxaFixa": {
+              "type": "number",
+              "example": 34
+            }
+          }
+        },
+        "mesAno": {
+          "type": "string",
+          "example": "2022-03"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "Movimentacao": {
+      "type": "object",
+      "properties": {
+        "descricao": {
+          "type": "string",
+          "example": "Conta Luz Março/2022"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "dataPagamento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "dataVencimento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "_idTipoMovimentacao": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "ratear": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "descricao",
+        "valor",
+        "_idTipoMovimentacao",
+        "ratear"
+      ]
+    },
+    "MovimentacaoResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Conta Luz Março/2022"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "dataPagamento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "dataVencimento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "tipoMovimentacao": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "21fc6aa5b49ec355ca0300b4"
+            },
+            "descricao": {
+              "type": "string",
+              "example": "Conta à pagar"
+            },
+            "tipo": {
+              "type": "string",
+              "example": "S"
+            }
+          }
+        },
+        "ratear": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "Cobranca": {
+      "type": "object",
+      "properties": {
+        "descricao": {
+          "type": "string",
+          "example": "Condominio Março/2022 apto 402"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "valorRateioLeitura": {
+          "type": "number",
+          "example": 5
+        },
+        "mesAno": {
+          "type": "string",
+          "example": "2022-03"
+        },
+        "dataPagamento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "dataVencimento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "_idUsuarioCobranca": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "itemsCobranca": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "valor": {
+                "type": "number",
+                "example": 150
+              },
+              "valorRateado": {
+                "type": "number",
+                "example": 15
+              },
+              "_idMovimentacao": {
+                "type": "string",
+                "example": "61fc6aa5b49ec355ca0300b3"
+              },
+              "_idLeitura": {
+                "type": "string",
+                "example": "61fc6aa5b49ec355ca0300bs"
+              }
+            },
+            "required": [
+              "_idMovimentacao",
+              "_idLeitura"
+            ]
+          }
+        }
+      },
+      "required": [
+        "descricao",
+        "valor",
+        "valorRateioLeitura",
+        "mesAno",
+        "_idUsuarioCobranca"
+      ]
+    },
+    "CobrancaResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Condominio Março/2022 apto 402"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "valorRateioLeitura": {
+          "type": "number",
+          "example": 5
+        },
+        "mesAno": {
+          "type": "string",
+          "example": "2022-03"
+        },
+        "dataPagamento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "dataVencimento": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "_idUsuarioCobranca": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "itemsCobranca": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_idMovimentacao": {
+                "type": "string",
+                "example": "61fc6aa5b49ec355ca0300b3"
+              },
+              "_idLeitura": {
+                "type": "string",
+                "example": "61fc6aa5b49ec355ca0300bs"
+              }
+            },
+            "required": [
+              "_idMovimentacao",
+              "_idLeitura"
+            ]
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "ContaResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Conta Luz Março/2022"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "_idLeitura": {
+          "type": "string",
+          "example": "13cf6aa5b49ec355ca0300b4"
+        },
+        "leituraAnterior": {
+          "type": "number",
+          "example": 105.3
+        },
+        "leituraAtual": {
+          "type": "number",
+          "example": 108
+        },
+        "tipoMovimentacao": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "41fc6aa5b49ec355ca0300b4"
+            },
+            "descricao": {
+              "type": "string",
+              "example": "Conta à pagar"
+            },
+            "tipo": {
+              "type": "string",
+              "example": "S"
+            }
+          }
+        },
+        "tipoLeitura": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "11fc6aa5b49ec355ca0300b4"
+            },
+            "descricao": {
+              "type": "string",
+              "example": "Água"
+            },
+            "unidadeMedida": {
+              "type": "string",
+              "example": "m3"
+            },
+            "taxaFixa": {
+              "type": "number",
+              "example": 30.4
+            },
+            "valorUnidade": {
+              "type": "number",
+              "example": 0.65
+            }
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "CaixaResponse": {
+      "type": "object",
+      "properties": {
+        "descricao": {
+          "type": "string",
+          "example": "Conta Luz Março/2022"
+        },
+        "valor": {
+          "type": "number",
+          "example": 50
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "tipoMovimentacao": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "41fc6aa5b49ec355ca0300b4"
+            },
+            "descricao": {
+              "type": "string",
+              "example": "Conta à pagar"
+            },
+            "tipo": {
+              "type": "string",
+              "example": "S"
+            }
+          }
+        }
+      }
+    },
+    "Ocorrencia": {
+      "type": "object",
+      "properties": {
+        "motivo": {
+          "type": "string",
+          "example": "Problema na luz do andar 1"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Luz deve estar queimada"
+        },
+        "situacao": {
+          "type": "string",
+          "example": "Resolvida"
+        },
+        "_idUsuarioOcorrencia": {
+          "type": "string",
+          "example": "11fc6aa5b49ec355ca0300b4"
+        }
+      },
+      "required": [
+        "_idUsuarioOcorrencia"
+      ]
+    },
+    "OcorrenciaResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "motivo": {
+          "type": "string",
+          "example": "Problema na luz do andar 1"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Luz deve estar queimada"
+        },
+        "situacao": {
+          "type": "string",
+          "example": "Resolvida"
+        },
+        "usuarioOcorrencia": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "11fc6aa5b49ec355ca0300b4"
+            },
+            "nome": {
+              "type": "string",
+              "example": "Joaquim"
+            }
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "TipoLeitura": {
+      "type": "object",
+      "properties": {
+        "descricao": {
+          "type": "string",
+          "example": "Água"
+        },
+        "unidadeMedida": {
+          "type": "string",
+          "example": "m3"
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 0.6
+        },
+        "taxaFixa": {
+          "type": "number",
+          "example": 30.4
+        }
+      },
+      "required": [
+        "descricao",
+        "unidadeMedida"
+      ]
+    },
+    "TipoLeituraResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Água"
+        },
+        "unidadeMedida": {
+          "type": "string",
+          "example": "m3"
+        },
+        "valorUnidade": {
+          "type": "number",
+          "example": 0.6
+        },
+        "taxaFixa": {
+          "type": "number",
+          "example": 30.4
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    },
+    "TipoMovimentacao": {
+      "type": "object",
+      "properties": {
+        "descricao": {
+          "type": "string",
+          "example": "Conta à pagar"
+        },
+        "tipo": {
+          "type": "string",
+          "example": "S"
+        },
+        "gerarCobranca": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "tipo",
+        "gerarCobranca"
+      ]
+    },
+    "TipoMovimentacaoResponse": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "61fc6aa5b49ec355ca0300b4"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Conta à pagar"
+        },
+        "gerarCobranca": {
+          "type": "boolean",
+          "example": true
+        },
+        "tipo": {
+          "type": "string",
+          "example": "S"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-03-24T20:30:01"
+        }
+      }
+    }
+  },
+  "customSiteTitle": "Documentação API - Gestão de Condomínios"
+}
