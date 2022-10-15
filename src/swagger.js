@@ -121,7 +121,6 @@ const config = {
       dataPagamento: "2022-03-24T20:30:01",
       dataVencimento: "2022-03-24T20:30:01",
       $_idTipoMovimentacao: "61fc6aa5b49ec355ca0300b4",
-      _idTipoLeitura: "61fc6aa5b49ec355ca0300b4",
       $ratear: true,
     },
     MovimentacaoResponse: {
@@ -134,13 +133,6 @@ const config = {
         _id: "21fc6aa5b49ec355ca0300b4",
         descricao: "Conta à pagar",
         tipo: "S",
-      },
-      tipoLeitura: {
-        _id: "11fc6aa5b49ec355ca0300b4",
-        descricao: "Água",
-        unidadeMedida: "m3",
-        valorUnidade: 0.6,
-        taxaFixa: 34,
       },
       ratear: true,
       createdAt: "2022-03-24T20:30:01",

@@ -3385,10 +3385,6 @@
           "type": "string",
           "example": "61fc6aa5b49ec355ca0300b4"
         },
-        "_idTipoLeitura": {
-          "type": "string",
-          "example": "61fc6aa5b49ec355ca0300b4"
-        },
         "ratear": {
           "type": "boolean",
           "example": true
@@ -3438,31 +3434,6 @@
             "tipo": {
               "type": "string",
               "example": "S"
-            }
-          }
-        },
-        "tipoLeitura": {
-          "type": "object",
-          "properties": {
-            "_id": {
-              "type": "string",
-              "example": "11fc6aa5b49ec355ca0300b4"
-            },
-            "descricao": {
-              "type": "string",
-              "example": "Água"
-            },
-            "unidadeMedida": {
-              "type": "string",
-              "example": "m3"
-            },
-            "valorUnidade": {
-              "type": "number",
-              "example": 0.6
-            },
-            "taxaFixa": {
-              "type": "number",
-              "example": 34
             }
           }
         },
