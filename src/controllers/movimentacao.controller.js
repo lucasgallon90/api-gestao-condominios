@@ -58,6 +58,7 @@ module.exports = class Movimentacao {
       const data = moment(mesAno + "-01");
       const startOfMonth = moment(data).startOf("month").toDate();
       const endOfMonth = moment(data).endOf("month").toDate();
+
       const filters = [
         {
           $match: {
@@ -75,54 +76,30 @@ module.exports = class Movimentacao {
           },
         },
         {
-          $lookup: {
-            from: "tiposleitura",
-            localField: "_idTipoLeitura",
-            foreignField: "_id",
-            as: "tipoLeitura",
-          },
-        },
-        { $match: { "tipoMovimentacao.gerarCobranca": true } },
-        {
-          $unwind: {
-            path: "$tipoLeitura",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
           $unwind: {
             path: "$tipoMovimentacao",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $unwind: {
-            path: "$leitura",
             preserveNullAndEmptyArrays: true,
           },
         },
         { $sort: { dataVencimento: 1 } },
       ];
       const results = await movimentacaoRepository.getContasMesAno(filters);
-      for (let result of results) {
-        if (result.dataVencimento) {
-          const leitura = await leituraRepository.get({
-            _idTipoLeitura: result._idTipoLeitura,
-            mesAno: moment(result.dataVencimento).format("YYYY-MM"),
-          });
-          if (leitura) {
-            result._idLeitura = leitura._id;
-            result.leituraAnterior = leitura.leituraAnterior;
-            result.leituraAtual = leitura.leituraAtual;
-          }
-        }
-      }
+
+      const leituras = await leituraRepository.get([
+        {
+          $match: {
+            _idCondominio: ObjectId(user._idCondominio),
+            _idUsuarioLeitura: _idUsuario,
+            mesAno: mesAno,
+          },
+        },
+      ]);
       /* #swagger.responses[200] = {
       description: 'Contas e suas referidas leituras/rateios do mês/ano obtidas com sucesso',
       schema: [{ 
       $ref: '#/definitions/ContaResponse'} ]
       } */
-      return res.json(results);
+      return res.json([...results, ...leituras]);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);
