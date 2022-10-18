@@ -98,59 +98,6 @@ module.exports = class Movimentacao {
       res.status(400).json(error);
     }
   }
-  static async getContasMesAno(req, res) {
-    const { user } = req;
-    const { mesAno, _idUsuario } = req.body;
-    try {
-      const data = moment(mesAno + "-01");
-      const startOfMonth = moment(data).startOf("month").toDate();
-      const endOfMonth = moment(data).endOf("month").toDate();
-      const filters = [
-        {
-          $match: {
-            dataVencimento: { $gte: startOfMonth, $lte: endOfMonth },
-            ratear: true,
-            _idCondominio: ObjectId(user._idCondominio),
-          },
-        },
-        {
-          $lookup: {
-            from: "tiposmovimentacao",
-            localField: "_idTipoMovimentacao",
-            foreignField: "_id",
-            as: "tipoMovimentacao",
-          },
-        },
-        {
-          $unwind: {
-            path: "$tipoMovimentacao",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        { $sort: { dataVencimento: 1 } },
-      ];
-      const results = await movimentacaoRepository.getContasMesAno(filters);
-
-      const leituras = await leituraRepository.get([
-        {
-          $match: {
-            _idCondominio: ObjectId(user._idCondominio),
-            _idUsuarioLeitura: _idUsuario,
-            mesAno: mesAno,
-          },
-        },
-      ]);
-      /* #swagger.responses[200] = {
-      description: 'Contas e suas referidas leituras/rateios do mês/ano obtidas com sucesso',
-      schema: [{ 
-      $ref: '#/definitions/ContaResponse'} ]
-      } */
-      return res.json([...results, ...leituras]);
-    } catch (error) {
-      console.log(error);
-      res.status(400).json(error);
-    }
-  }
 
   static async create(req, res) {
     const movimentacao = req.body;

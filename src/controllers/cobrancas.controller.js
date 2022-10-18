@@ -1,5 +1,9 @@
 const cobrancaRepository = require("../repositories/cobranca.repository.js");
 const condominioRepository = require("../repositories/condominio.repository.js");
+const leituraRepository = require("../repositories/leitura.repository.js");
+const movimentacaoRepository = require("../repositories/movimentacao.repository.js");
+const usuarioRepository = require("../repositories/usuario.repository.js");
+const moment = require("moment");
 const { LIMIT } = require("../utils");
 const ObjectId = require("mongoose").Types.ObjectId;
 
@@ -68,6 +72,84 @@ module.exports = class Cobranca {
         .status(result ? 200 : 400)
         .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
+      res.status(400).json(error);
+    }
+  }
+
+  static async getContasMesAno(req, res) {
+    const { user } = req;
+    const { mesAno, _idUsuario } = req.body;
+    try {
+      const [usuario] = await usuarioRepository.get([
+        { $match: { _id: ObjectId(_idUsuario), ativo: true } },
+      ]);
+      if (!usuario) {
+        return res.status(400).json({ error: "Usuário não encontrado" });
+      }
+      const data = moment(mesAno + "-01");
+      const startOfMonth = moment(data).startOf("month").toDate();
+      const endOfMonth = moment(data).endOf("month").toDate();
+      const filters = [
+        {
+          $match: {
+            dataVencimento: { $gte: startOfMonth, $lte: endOfMonth },
+            ratear: true,
+            _idCondominio: ObjectId(user._idCondominio),
+          },
+        },
+        {
+          $lookup: {
+            from: "tiposmovimentacao",
+            localField: "_idTipoMovimentacao",
+            foreignField: "_id",
+            as: "tipoMovimentacao",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoMovimentacao",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        { $sort: { dataVencimento: 1 } },
+      ];
+      const contas = await movimentacaoRepository.getContasMesAno(filters);
+      if (contas?.length > 0) {
+        const [moradores] = await usuarioRepository.list([
+          {
+            $match: {
+              _idCondominio: ObjectId(user._idCondominio),
+              bloco: usuario.bloco,
+              tipoUsuario: "morador",
+              ativo: true,
+            },
+          },
+          {
+            $count: "total_moradores",
+          },
+        ]);
+        contas.map((conta) => {
+          conta.valorRateado = parseFloat((conta.valor / (moradores.total_moradores || 1)).toFixed(2));
+        });
+      }
+
+      const leituras = await leituraRepository.list([
+        {
+          $match: {
+            _idCondominio: ObjectId(user._idCondominio),
+            _idUsuarioLeitura: ObjectId(_idUsuario),
+            mesAno: mesAno,
+          },
+        },
+      ]);
+      /* #swagger.responses[200] = {
+      description: 'Contas e suas referidas leituras/rateios do mês/ano obtidas com sucesso',
+      schema: [{ 
+      $ref: '#/definitions/ContaResponse'} ]
+      } */
+      return res.json({ contas, leituras });
+    } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }

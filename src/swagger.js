@@ -150,8 +150,8 @@ const config = {
         {
           valor: 150,
           valorRateado: 15,
-          $_idMovimentacao: "61fc6aa5b49ec355ca0300b3",
-          $_idLeitura: "61fc6aa5b49ec355ca0300bs",
+          _idMovimentacao: "61fc6aa5b49ec355ca0300b3",
+          _idLeitura: "61fc6aa5b49ec355ca0300bs",
         },
       ],
     },

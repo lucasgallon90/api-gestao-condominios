@@ -33,6 +33,7 @@ router.post(
         apto: Joi.string().optional(),
         bloco: Joi.string().optional(),
         email: Joi.string().optional(),
+        ativo: Joi.boolean().optional(),
       }),
       query: Joi.object().keys({
         page: Joi.number().optional(),
@@ -45,6 +46,7 @@ router.post(
   ),
   /* #swagger.tags = ['Usuário']
   #swagger.parameters['body'] = { in: 'body', description: 'Filtros', type: 'string',  schema: {
+                    ativo: true,
                     nome: 'Joaquim',
                     nomeCondominio: 'Frei João II',
                     apto: '401',

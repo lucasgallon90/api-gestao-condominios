@@ -103,7 +103,7 @@ module.exports = class Usuario {
       if (Object.keys(filters).length > 0) {
         Object.keys(filters).map(
           (key) =>
-            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+            (filters[key] = key != "ativo" ? { $regex: `.*${filters[key]}.*`, $options: "i" } : filters[key])
         );
       }
       const results = await usuarioRepository.list([

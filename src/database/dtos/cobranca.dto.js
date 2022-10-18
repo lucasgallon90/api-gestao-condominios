@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const { celebrate, Joi } = require("celebrate");
+const { Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
 
 const CobrancaDTO = Joi.object().keys({
@@ -13,8 +12,8 @@ const CobrancaDTO = Joi.object().keys({
     .optional()
     .items(
       Joi.object().keys({
-        _idMovimentacao: Joi.objectId().required(),
-        _idLeitura: Joi.objectId().required(),
+        _idMovimentacao: Joi.objectId().optional(),
+        _idLeitura: Joi.objectId().optional(),
         valor: Joi.number().default(0),
         valorRateado: Joi.number().default(0),
       })
