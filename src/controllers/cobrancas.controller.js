@@ -62,7 +62,7 @@ module.exports = class Cobranca {
         },
       ];
 
-      const result = await cobrancaRepository.get(filters);
+      const [result] = await cobrancaRepository.get(filters);
       /* #swagger.responses[200] = {
       description: 'Cobrança obtida com sucesso',
       schema: { 

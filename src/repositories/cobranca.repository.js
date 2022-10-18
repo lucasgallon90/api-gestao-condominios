@@ -14,14 +14,18 @@ module.exports = class Cobranca {
     const cobrancaCreate = { ...data };
     delete cobrancaCreate.itemsCobranca;
     let cobrancaCreated = await cobranca.create(cobrancaCreate);
-    data.itemsCobranca.map((itemCobranca) => {
-      itemCobranca._idCobranca = cobrancaCreated._doc._id;
-      itemCobranca._idCondominio = data._idCondominio;
-    });
-    const itemsCobrancaCreated = await itemCobranca.insertMany(
-      data.itemsCobranca
-    );
-    return { ...cobrancaCreated._doc, itemsCobranca: itemsCobrancaCreated };
+    let result = { ...cobrancaCreated._doc };
+    if (data.itemsCobranca) {
+      data.itemsCobranca?.map((itemCobranca) => {
+        itemCobranca._idCobranca = cobrancaCreated._doc._id;
+        itemCobranca._idCondominio = data._idCondominio;
+      });
+      const itemsCobrancaCreated = await itemCobranca.insertMany(
+        data.itemsCobranca
+      );
+      result = { ...result, itemsCobranca: itemsCobrancaCreated };
+    }
+    return result;
   }
 
   static async update(data) {
