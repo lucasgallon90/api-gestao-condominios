@@ -3503,11 +3503,7 @@
                 "type": "string",
                 "example": "61fc6aa5b49ec355ca0300bs"
               }
-            },
-            "required": [
-              "_idMovimentacao",
-              "_idLeitura"
-            ]
+            }
           }
         }
       },
@@ -3567,11 +3563,7 @@
                 "type": "string",
                 "example": "61fc6aa5b49ec355ca0300bs"
               }
-            },
-            "required": [
-              "_idMovimentacao",
-              "_idLeitura"
-            ]
+            }
           }
         },
         "createdAt": {

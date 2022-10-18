@@ -7,7 +7,6 @@ const CobrancaDTO = require("../database/dtos/cobranca.dto.js")
 const {
   list,
   get,
-  getContasMesAno,
   remove,
   create,
   update,
