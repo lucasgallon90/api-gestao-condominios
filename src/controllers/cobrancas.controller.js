@@ -29,6 +29,20 @@ module.exports = class Cobranca {
             as: "itemsCobranca",
           },
         },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioCobranca",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         ...paginate,
       ]);
       /* #swagger.responses[200] = {
@@ -58,6 +72,20 @@ module.exports = class Cobranca {
             localField: "_id",
             foreignField: "_idCobranca",
             as: "itemsCobranca",
+          },
+        },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioCobranca",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
           },
         },
       ];
@@ -129,7 +157,9 @@ module.exports = class Cobranca {
           },
         ]);
         contas.map((conta) => {
-          conta.valorRateado = parseFloat((conta.valor / (moradores.total_moradores || 1)).toFixed(2));
+          conta.valorRateado = parseFloat(
+            (conta.valor / (moradores.total_moradores || 1)).toFixed(2)
+          );
         });
       }
 
