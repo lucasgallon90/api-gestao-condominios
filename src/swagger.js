@@ -141,15 +141,13 @@ const config = {
     Cobranca: {
       $descricao: "Condominio Março/2022 apto 402",
       $valor: 50,
-      $valorRateioLeitura: 5,
       $mesAno: "2022-03",
       dataPagamento: "2022-03-24T20:30:01",
       dataVencimento: "2022-03-24T20:30:01",
       $_idUsuarioCobranca: "61fc6aa5b49ec355ca0300b4",
       itemsCobranca: [
         {
-          valor: 150,
-          valorRateado: 15,
+          valor: 50,
           _idMovimentacao: "61fc6aa5b49ec355ca0300b3",
           _idLeitura: "61fc6aa5b49ec355ca0300bs",
         },
@@ -159,15 +157,15 @@ const config = {
       _id: "61fc6aa5b49ec355ca0300b4",
       descricao: "Condominio Março/2022 apto 402",
       valor: 50,
-      valorRateioLeitura: 5,
       mesAno: "2022-03",
       dataPagamento: "2022-03-24T20:30:01",
       dataVencimento: "2022-03-24T20:30:01",
       _idUsuarioCobranca: "61fc6aa5b49ec355ca0300b4",
       itemsCobranca: [
         {
-          $_idMovimentacao: "61fc6aa5b49ec355ca0300b3",
-          $_idLeitura: "61fc6aa5b49ec355ca0300bs",
+          valor: 50,
+          _idMovimentacao: "61fc6aa5b49ec355ca0300b3",
+          _idLeitura: "61fc6aa5b49ec355ca0300bs",
         },
       ],
       createdAt: "2022-03-24T20:30:01",

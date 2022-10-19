@@ -46,8 +46,6 @@ module.exports = class Caixa {
     const { saldoInicial } = req.body;
     try {
       const saldosAnteriores = await caixaRepository.getSaldos();
-      console.log(saldosAnteriores);
-      console.log(saldoInicial);  
       if (
         saldosAnteriores.saldoCaixaInicial === saldosAnteriores.saldoCaixaAtual &&
         saldoInicial === 0

@@ -5,7 +5,7 @@ module.exports = class Leitura {
     return await leitura.aggregate(filters);
   }
   static async get(data) {
-    return await leitura.findOne(data);
+    return await leitura.aggregate(data);
   }
 
   static async create(data) {

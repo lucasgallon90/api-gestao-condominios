@@ -124,6 +124,7 @@ module.exports = class Leitura {
         .status(result ? 200 : 400)
         .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }

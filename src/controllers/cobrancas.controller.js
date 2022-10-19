@@ -126,17 +126,11 @@ module.exports = class Cobranca {
           },
         },
         {
-          $lookup: {
-            from: "tiposmovimentacao",
-            localField: "_idTipoMovimentacao",
-            foreignField: "_id",
-            as: "tipoMovimentacao",
-          },
-        },
-        {
-          $unwind: {
-            path: "$tipoMovimentacao",
-            preserveNullAndEmptyArrays: true,
+          $project: {
+            _id: 0,
+            _idMovimentacao: "$_id",
+            descricao: 1,
+            valorMovimentacao: "$valor",
           },
         },
         { $sort: { dataVencimento: 1 } },
@@ -157,8 +151,8 @@ module.exports = class Cobranca {
           },
         ]);
         contas.map((conta) => {
-          conta.valorRateado = parseFloat(
-            (conta.valor / (moradores.total_moradores || 1)).toFixed(2)
+          conta.valor = parseFloat(
+            (conta.valorMovimentacao / (moradores.total_moradores || 1)).toFixed(2)
           );
         });
       }
@@ -169,6 +163,32 @@ module.exports = class Cobranca {
             _idCondominio: ObjectId(user._idCondominio),
             _idUsuarioLeitura: ObjectId(_idUsuario),
             mesAno: mesAno,
+          },
+        },
+        {
+          $lookup: {
+            from: "tiposleitura",
+            localField: "_idTipoLeitura",
+            foreignField: "_id",
+            as: "tipoLeitura",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tipoLeitura",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            _idLeitura: "$_id",
+            descricao: "$tipoLeitura.descricao",
+            valorLeitura: "$valor",
+            taxaFixa: 1,
+            valor: "$valorTotal",
+            unidadeMedida: "$tipoLeitura.unidadeMedida",
+            leitura: { $subtract: ["$leituraAtual", "$leituraAnterior"] },
           },
         },
       ]);

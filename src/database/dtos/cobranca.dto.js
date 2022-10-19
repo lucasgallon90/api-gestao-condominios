@@ -14,8 +14,13 @@ const CobrancaDTO = Joi.object().keys({
       Joi.object().keys({
         _idMovimentacao: Joi.objectId().optional(),
         _idLeitura: Joi.objectId().optional(),
-        valor: Joi.number().default(0),
-        valorRateado: Joi.number().default(0),
+        descricao: Joi.string().optional(),
+        valor: Joi.number().optional().default(0),
+        unidadeMedida: Joi.string().optional(),
+        taxaFixa: Joi.number().optional().default(0),
+        valorLeitura: Joi.number().optional().default(0),
+        valorMovimentacao: Joi.number().optional().default(0),
+        leitura: Joi.number().optional().default(0),
       })
     ),
 });
