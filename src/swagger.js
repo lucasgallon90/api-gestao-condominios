@@ -148,6 +148,12 @@ const config = {
       itemsCobranca: [
         {
           valor: 50,
+          descricao: "Água",
+          unidadeMedida: "m3",
+          taxaFixa: 5,
+          valorLeitura: 10,
+          valorMovimentacao: 0,
+          leitura: 2,
           _idMovimentacao: "61fc6aa5b49ec355ca0300b3",
           _idLeitura: "61fc6aa5b49ec355ca0300bs",
         },
@@ -164,6 +170,12 @@ const config = {
       itemsCobranca: [
         {
           valor: 50,
+          descricao: "Água",
+          unidadeMedida: "m3",
+          taxaFixa: 5,
+          valorLeitura: 10,
+          valorMovimentacao: 0,
+          leitura: 2,
           _idMovimentacao: "61fc6aa5b49ec355ca0300b3",
           _idLeitura: "61fc6aa5b49ec355ca0300bs",
         },

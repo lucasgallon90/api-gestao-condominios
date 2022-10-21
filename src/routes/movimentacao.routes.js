@@ -19,10 +19,10 @@ router.post(
   celebrate(
     {
       body: Joi.object().keys({
-        createdAt: Joi.objectId().optional(),
+        createdAt: Joi.string().optional(),
         descricao: Joi.string().optional(),
-        dataVencimento: Joi.objectId().optional(),
-        dataPagamento: Joi.objectId().optional(),
+        dataVencimento: Joi.string().optional(),
+        dataPagamento: Joi.string().optional(),
       }),
       query: Joi.object().keys({
         page: Joi.number().optional(),

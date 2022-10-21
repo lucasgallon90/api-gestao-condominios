@@ -7,12 +7,23 @@ const ObjectId = require("mongoose").Types.ObjectId;
 module.exports = class Caixa {
   static async list(req, res) {
     const { user } = req;
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     try {
       let paginate = {};
       if (page && limit) {
         paginate = { skip: limit * (page - 1), limit };
+      }
+      if (filters.createdAt) {
+        filters.createdAt = {
+          $gte: moment(filters.createdAt).startOf("day").toDate(),
+          $lte: moment(filters.createdAt).endOf("day").toDate(),
+        };
+      } else if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
       }
       const results = await caixaRepository.list({
         filters: {
@@ -41,13 +52,15 @@ module.exports = class Caixa {
       res.status(400).json(error);
     }
   }
+
   static async updateSaldoInicial(req, res) {
     const { user } = req;
     const { saldoInicial } = req.body;
     try {
       const saldosAnteriores = await caixaRepository.getSaldos();
       if (
-        saldosAnteriores.saldoCaixaInicial === saldosAnteriores.saldoCaixaAtual &&
+        saldosAnteriores.saldoCaixaInicial ===
+          saldosAnteriores.saldoCaixaAtual &&
         saldoInicial === 0
       ) {
         await caixaRepository.updateSaldoInicial({
@@ -75,6 +88,31 @@ module.exports = class Caixa {
       } */
       return res.json({ saldoInicial });
     } catch (error) {
+      res.status(400).json(error);
+    }
+  }
+
+  static async totalPeriodo(req, res) {
+    const { user } = req;
+    const { dataInicial, dataFinal } = req.body;
+    try {
+      const results = await caixaRepository.list({
+        filters: {
+          _idCondominio: user._idCondominio,
+          dataPagamento: { $ne: null },
+          createdAt: {
+            $gte: moment(dataInicial).startOf("day").toDate(),
+            $lte: moment(dataFinal).endOf("day").toDate(),
+          },
+        },
+      });
+      /* #swagger.responses[200] = {
+      description: 'Caixa listado com sucesso',
+      schema: [{ $ref: '#/definitions/CaixaResponse'}]
+      } */
+      return res.json(results);
+    } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }

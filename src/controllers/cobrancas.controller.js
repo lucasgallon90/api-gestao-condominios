@@ -9,7 +9,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Cobranca {
   static async list(req, res) {
-    const { filters } = req.body;
+    const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     const { user } = req;
     try {
@@ -17,6 +17,25 @@ module.exports = class Cobranca {
       if (page && limit) {
         paginate = [{ $skip: limit * (page - 1) }, { $limit: limit }];
       }
+
+      if (
+        filters.dataPagamento ||
+        filters.dataVencimento ||
+        filters.createdAt
+      ) {
+        Object.keys(filters).map((key) => {
+          filters[key] = {
+            $gte: moment(filters[key]).startOf("day").toDate(),
+            $lte: moment(filters[key]).endOf("day").toDate(),
+          };
+        });
+      } else if (Object.keys(filters).length > 0) {
+        Object.keys(filters).map(
+          (key) =>
+            (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
+        );
+      }
+      
       const results = await cobrancaRepository.list([
         {
           $match: { _idCondominio: ObjectId(user._idCondominio), ...filters },
@@ -152,7 +171,9 @@ module.exports = class Cobranca {
         ]);
         contas.map((conta) => {
           conta.valor = parseFloat(
-            (conta.valorMovimentacao / (moradores.total_moradores || 1)).toFixed(2)
+            (
+              conta.valorMovimentacao / (moradores.total_moradores || 1)
+            ).toFixed(2)
           );
         });
       }

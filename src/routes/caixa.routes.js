@@ -8,6 +8,7 @@ const {
   getSaldoAtual,
   getTotalSaidas,
   getTotalEntradas,
+  totalPeriodo,
 } = require("../controllers/caixa.controller");
 const { LIMIT } = require("../utils");
 
@@ -43,6 +44,27 @@ router.post(
 }
       */
   list
+);
+
+router.post(
+  "/total-periodo",
+  celebrate(
+    {
+      params: Joi.object().keys({
+        dataInicial: Joi.string().required(),
+        dataFinal: Joi.string().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  /* #swagger.tags = ['Caixa']
+      #swagger.parameters['body'] = { in: 'body', description: 'Body', type: 'string',  schema: {
+                        dataInicial: '2022-05-01',
+                        dataFinal: '2022-01-01',
+                    }}*/
+  totalPeriodo
 );
 
 router.put(

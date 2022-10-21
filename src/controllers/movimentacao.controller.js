@@ -1,7 +1,6 @@
 const movimentacaoRepository = require("../repositories/movimentacao.repository.js");
 const tipoMovimentacaoRepository = require("../repositories/tipoMovimentacao.repository.js");
 const condominioRepository = require("../repositories/condominio.repository.js");
-const leituraRepository = require("../repositories/leitura.repository.js");
 const { LIMIT } = require("../utils/index.js");
 const moment = require("moment");
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -20,7 +19,18 @@ module.exports = class Movimentacao {
           { $sort: { createdAt: -1 } },
         ];
       }
-      if (Object.keys(filters).length > 0) {
+      if (
+        filters.dataPagamento ||
+        filters.dataVencimento ||
+        filters.createdAt
+      ) {
+        Object.keys(filters).map((key) => {
+          filters[key] = {
+            $gte: moment(filters[key]).startOf("day").toDate(),
+            $lte: moment(filters[key]).endOf("day").toDate(),
+          };
+        });
+      } else if (Object.keys(filters).length > 0) {
         Object.keys(filters).map(
           (key) =>
             (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
