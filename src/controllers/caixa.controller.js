@@ -96,14 +96,12 @@ module.exports = class Caixa {
     const { user } = req;
     const { dataInicial, dataFinal } = req.body;
     try {
-      const results = await caixaRepository.list({
-        filters: {
-          _idCondominio: user._idCondominio,
-          dataPagamento: { $ne: null },
-          createdAt: {
-            $gte: moment(dataInicial).startOf("day").toDate(),
-            $lte: moment(dataFinal).endOf("day").toDate(),
-          },
+      const results = await caixaRepository.totalPeriodo({
+        _idCondominio: ObjectId(user._idCondominio),
+        dataPagamento: { $ne: null },
+        dataPagamento: {
+          $gte: moment(dataInicial).startOf("day").toDate(),
+          $lte: moment(dataFinal).endOf("day").toDate(),
         },
       });
       /* #swagger.responses[200] = {

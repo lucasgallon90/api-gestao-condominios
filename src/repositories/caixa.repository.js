@@ -1,6 +1,7 @@
 const movimentacao = require("../database/models/movimentacao.schema.js");
 const cobranca = require("../database/models/cobranca.schema.js");
 const condominio = require("../database/models/condominio.schema.js");
+const { groupByKey } = require("../utils/index.js");
 
 module.exports = class Caixa {
   static async list({ filters, paginate }) {
@@ -14,14 +15,111 @@ module.exports = class Caixa {
     return results;
   }
 
+  static async totalPeriodo(filters) {
+    let movimentacoes = await movimentacao.aggregate([
+      {
+        $match: filters,
+      },
+      {
+        $lookup: {
+          from: "tiposmovimentacao",
+          localField: "_idTipoMovimentacao",
+          foreignField: "_id",
+          as: "tipoMovimentacao",
+        },
+      },
+      {
+        $unwind: {
+          path: "$tipoMovimentacao",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            tipoMovimentacao: "$tipoMovimentacao.tipo",
+            year: { $year: "$dataPagamento" },
+            month: { $month: "$dataPagamento" },
+          },
+          total: { $sum: "$valor" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          total: 1,
+          tipoMovimentacao: "$_id.tipoMovimentacao",
+          mesAno: {
+            $concat: [
+              { $toString: "$_id.year" },
+              "-",
+              { $toString: "$_id.month" },
+            ],
+          },
+        },
+      },
+    ]);
+    const cobrancas = await cobranca.aggregate([
+      {
+        $match: filters,
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$dataPagamento" },
+            month: { $month: "$dataPagamento" },
+          },
+          total: { $sum: "$valor" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          total: 1,
+          tipoMovimentacao: "$_id.tipoMovimentacao",
+          mesAno: {
+            $concat: [
+              { $toString: "$_id.year" },
+              "-",
+              { $toString: "$_id.month" },
+            ],
+          },
+        },
+      },
+    ]);
+    if (cobrancas?.length > 0) {
+      cobrancas.map((cobranca) => {
+        let movimentacaoFound = movimentacoes.find(
+          (movimentacao) =>
+            movimentacao.tipoMovimentacao === "E" &&
+            movimentacao.mesAno === cobranca.mesAno
+        );
+        if (movimentacaoFound) {
+          movimentacaoFound.total = movimentacaoFound.total + cobranca.total;
+        } else {
+          let cobrancaToPush = { ...cobranca };
+          cobrancaToPush.tipoMovimentacao = "E";
+          movimentacoes.push(cobrancaToPush);
+        }
+      });
+    }
+    movimentacoes?.sort(function (a, b) {
+      return new Date(a.mesAno + "-01") - new Date(b.mesAno + "-01");
+    });
+    movimentacoes = groupByKey(movimentacoes, "mesAno");
+    return movimentacoes;
+  }
+
   static async updateSaldoInicial({ filters, data }) {
     return await condominio.findOneAndUpdate(filters, data);
   }
 
   static async getSaldos(filters) {
-    return await condominio.findOne(filters, { saldoCaixaInicial: 1, saldoCaixaAtual: 1 });
+    return await condominio.findOne(filters, {
+      saldoCaixaInicial: 1,
+      saldoCaixaAtual: 1,
+    });
   }
-
 
   static async getSaldoAtual(filters) {
     return await condominio.findOne(filters, { saldoCaixaAtual: 1 });

@@ -49,8 +49,8 @@ router.post(
 router.post(
   "/total-periodo",
   celebrate(
-    {
-      params: Joi.object().keys({
+    { 
+      body: Joi.object().keys({
         dataInicial: Joi.string().required(),
         dataFinal: Joi.string().required(),
       }),
