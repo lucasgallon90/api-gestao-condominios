@@ -2,28 +2,24 @@ const { v4: uuid } = require("uuid");
 
 const tiposMovimentacao = [
   {
-    id: uuid(),
-    descricao: "Cobrança",
+    descricao: "Conta à receber",
+    gerarCobranca: false,
     tipo: "E",
-    createdAt: new Date(),
   },
   {
-    id: uuid(),
     descricao: "Conta à pagar",
+    gerarCobranca: true,
     tipo: "S",
-    createdAt: new Date(),
   },
   {
-    id: uuid(),
     descricao: "Ajuste Entrada",
+    gerarCobranca: false,
     tipo: "E",
-    createdAt: new Date(),
   },
   {
-    id: uuid(),
     descricao: "Ajuste Saída",
+    gerarCobranca: false,
     tipo: "S",
-    createdAt: new Date(),
   },
 ];
 

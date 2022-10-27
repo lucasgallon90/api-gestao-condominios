@@ -4,3 +4,5 @@ require('./register.tests.js');
 require('./usuario.tests.js');
 require('./morador.tests.js');
 require('./ocorrencia.tests.js');
+require('./tipo-leitura.tests.js');
+require('./tipo-movimentacao.tests.js');
