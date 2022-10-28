@@ -7,3 +7,4 @@ require('./ocorrencia.tests.js');
 require('./tipo-leitura.tests.js');
 require('./tipo-movimentacao.tests.js');
 require('./leitura.tests.js');
+require('./movimentacao.tests.js');
