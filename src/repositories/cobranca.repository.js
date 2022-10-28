@@ -4,10 +4,10 @@ const condominio = require("../database/models/condominio.schema.js");
 
 module.exports = class Cobranca {
   static async list(filters) {
-    return await cobranca.aggregate(filters);
+    return cobranca.aggregate(filters);
   }
   static async get(filters) {
-    return await cobranca.aggregate(filters);
+    return cobranca.aggregate(filters);
   }
 
   static async create(data) {

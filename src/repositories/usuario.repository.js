@@ -3,26 +3,26 @@ const jwt = require("jsonwebtoken");
 
 module.exports = class Usuario {
   static async list(filters) {
-    return await usuario.aggregate(filters);
+    return usuario.aggregate(filters);
   }
   static async get(filters) {
-    return await usuario.aggregate(filters);
+    return usuario.aggregate(filters);
   }
 
   static async getTotal() {
-    return await usuario.countDocuments();
+    return usuario.countDocuments();
   }
 
   static async create(data) {
-    return await usuario.create(data);
+    return usuario.create(data);
   }
 
   static async update(filters, data) {
-    return await usuario.findByIdAndUpdate(filters, data,{ new: true });
+    return usuario.findByIdAndUpdate(filters, data,{ new: true });
   }
 
   static async changeSenha(_id, senha) {
-    return await usuario.findOneAndUpdate({ _id }, { senha });
+    return usuario.findOneAndUpdate({ _id }, { senha });
   }
 
   static async delete(filters) {

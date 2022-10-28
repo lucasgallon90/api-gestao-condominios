@@ -2,21 +2,24 @@ const leitura = require("../database/models/leitura.schema.js");
 
 module.exports = class Leitura {
   static async list(filters) {
-    return await leitura.aggregate(filters);
+    return leitura.aggregate(filters);
   }
   static async get(data) {
-    return await leitura.aggregate(data);
+    return leitura.aggregate(data);
+  }
+  static async findUnique(filters) {
+    return leitura.findOne(filters);
   }
 
   static async create(data) {
-    return await leitura.create(data);
+    return leitura.create(data);
   }
 
   static async update({ filters, data }) {
-    return await leitura.findOneAndUpdate(filters, data);
+    return leitura.findOneAndUpdate(filters, data);
   }
 
   static async delete(filters) {
-    await leitura.deleteOne(filters);
+    return leitura.deleteOne(filters);
   }
 };
