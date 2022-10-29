@@ -1,10 +1,10 @@
 const request = require("supertest");
-const leituras = require("../database/mocks/leituras.mock");
+const cobrancas = require("../database/mocks/cobrancas.mock");
 const usuarios = require("../database/mocks/usuarios.mock");
 const app = require("../app");
 let token;
 let usuarioLogado;
-let tipoLeitura;
+let movimentacao;
 let idCreated;
 let idToDelete;
 
@@ -21,10 +21,10 @@ beforeEach((done) => {
     });
 });
 
-describe("Leituras", () => {
-  test("Criar leitura", async () => {
-    [tipoLeitura] = await request(app)
-      .post("/v1/tipos-leitura/list?limit=1")
+describe("Cobranças", () => {
+  test("Criar cobrança", async () => {
+    [movimentacao] = await request(app)
+      .post("/v1/movimentacoes/list?limit=1")
       .set("Authorization", `Bearer ${token}`)
       .set("Content-type", "application/json")
       .then((response) => {
@@ -32,13 +32,14 @@ describe("Leituras", () => {
           return response.body;
         }
       });
+    let cobrancaToCreate = {
+      _idUsuarioCobranca: usuarioLogado._id,
+      ...cobrancas[0],
+    };
+    cobrancaToCreate.itemsCobranca[0]._idMovimentacao = movimentacao._id;
     return request(app)
-      .post("/v1/leituras/create")
-      .send({
-        _idTipoLeitura: tipoLeitura._id,
-        _idUsuarioLeitura: usuarioLogado._id,
-        ...leituras[0],
-      })
+      .post("/v1/cobrancas/create")
+      .send(cobrancaToCreate)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         if (response.text && response.status != 400) {
@@ -51,14 +52,15 @@ describe("Leituras", () => {
       });
   });
 
-  test("Atualizar leitura", () => {
+  test("Atualizar cobrança", () => {
+    let cobrancaToUpdate = {
+      _idUsuarioCobranca: usuarioLogado._id,
+      ...cobrancas[1],
+    };
+    cobrancaToUpdate.itemsCobranca[0]._idMovimentacao = movimentacao._id;
     return request(app)
-      .put(`/v1/leituras/update/${idCreated}`)
-      .send({
-        _idTipoLeitura: tipoLeitura._id,
-        _idUsuarioLeitura: usuarioLogado._id,
-        ...leituras[0],
-      })
+      .put(`/v1/cobrancas/update/${idCreated}`)
+      .send(cobrancaToUpdate)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -66,9 +68,9 @@ describe("Leituras", () => {
       });
   });
 
-  test("Obter leitura", () => {
+  test("Obter cobrança", () => {
     return request(app)
-      .get(`/v1/leituras/${idCreated}`)
+      .get(`/v1/cobrancas/${idCreated}`)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -76,9 +78,9 @@ describe("Leituras", () => {
       });
   });
 
-  test("Listar leituras", () => {
+  test("Listar cobrança", () => {
     return request(app)
-      .post("/v1/leituras/list")
+      .post("/v1/cobrancas/list")
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -86,14 +88,15 @@ describe("Leituras", () => {
       });
   });
 
-  test("Deletar leitura", async () => {
+  test("Deletar cobrança", async () => {
+    let cobrancaToDelete = {
+      _idUsuarioCobranca: usuarioLogado._id,
+      ...cobrancas[1],
+    };
+    cobrancaToDelete.itemsCobranca[0]._idMovimentacao = movimentacao._id;
     await request(app)
-      .post("/v1/leituras/create")
-      .send({
-        _idTipoLeitura: tipoLeitura._id,
-        _idUsuarioLeitura: usuarioLogado._id,
-        ...leituras[1],
-      })
+      .post("/v1/cobrancas/create")
+      .send(cobrancaToDelete)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         if (response.text) {
@@ -101,7 +104,7 @@ describe("Leituras", () => {
         }
       });
     return (res = await request(app)
-      .delete(`/v1/leituras/delete/${idToDelete}`)
+      .delete(`/v1/cobrancas/delete/${idToDelete}`)
       .set("Authorization", `Bearer ${token}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
