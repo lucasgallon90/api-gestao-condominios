@@ -13,6 +13,8 @@ const {
   updateMorador,
   removeMorador,
   updateUsuarioLogado,
+  conviteRegistroEmail,
+  conviteRegistroLink,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -21,6 +23,39 @@ const UsuarioDTO = require("../database/dtos/usuario.dto.js");
 const authSuperAdminMiddleware = require("../middleware/authSuperAdmin.middleware.js");
 const authAdminMiddleware = require("../middleware/authAdmin.middleware.js");
 const { LIMIT } = require("../utils");
+
+router.post(
+  "/convite-registro-email",
+  authAdminMiddleware,
+  /* #swagger.tags = ['Usuário']
+  #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'Convite de registro por email',
+                schema: { $email: 'nome@email.com' }
+        } */
+  celebrate(
+    {
+      body: Joi.object().keys({
+        email: Joi.string().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  conviteRegistroEmail
+);
+
+router.get(
+  "/convite-registro-link",
+  authAdminMiddleware,
+  /* #swagger.tags = ['Usuário']
+  #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'Convite de registro por link',
+        } */
+  conviteRegistroLink
+);
 
 router.post(
   "/list/moradores",
@@ -281,6 +316,7 @@ router.put(
   ),
   updateSenha
 );
+
 
 router.delete(
   "/delete/:id",

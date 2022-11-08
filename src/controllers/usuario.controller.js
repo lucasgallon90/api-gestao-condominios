@@ -1,8 +1,10 @@
 const usuarioRepository = require("../repositories/usuario.repository.js");
+const condominioRepository = require("../repositories/condominio.repository.js");
 const { LIMIT } = require("../utils/index.js");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../repositories/usuario.repository.js");
 const ObjectId = require("mongoose").Types.ObjectId;
+const nodemailer = require("nodemailer");
 
 module.exports = class Usuario {
   static async list(req, res) {
@@ -103,7 +105,10 @@ module.exports = class Usuario {
       if (Object.keys(filters).length > 0) {
         Object.keys(filters).map(
           (key) =>
-            (filters[key] = key != "ativo" ? { $regex: `.*${filters[key]}.*`, $options: "i" } : filters[key])
+            (filters[key] =
+              key != "ativo"
+                ? { $regex: `.*${filters[key]}.*`, $options: "i" }
+                : filters[key])
         );
       }
       const results = await usuarioRepository.list([
@@ -304,7 +309,7 @@ module.exports = class Usuario {
       } */
       return res
         .status(200)
-        .json({ user: usuario, token: generateToken({ user:result }) });
+        .json({ user: usuario, token: generateToken({ user: result }) });
     } catch (error) {
       res.status(400).send(error);
       console.log(error);
@@ -366,6 +371,53 @@ module.exports = class Usuario {
         return res.status(400).json({ error: "Registro não encontrado" });
       }
       return res.json({ message: "Usuário deletado com sucesso" });
+    } catch (error) {
+      res.status(400).send(error);
+      console.log(error);
+    }
+  }
+
+  static async conviteRegistroEmail(req, res) {
+    const { user } = req;
+    const { email } = req.body;
+    try {
+      const condominio = await condominioRepository.getById(user._idCondominio);
+      const options = {
+        service: process.env.NODE_MAILER_SERVICE,
+        auth: {
+          user: process.env.NODE_MAILER_EMAIL,
+          pass: process.env.NODE_MAILER_PASS,
+        },
+        host: process.env.NODE_MAILER_HOST,
+        port: process.env.NODE_MAILER_PORT,
+        secure: process.env.NODE_MAILER_SECURE || false,
+      };
+      const transporter = nodemailer.createTransport(options);
+      const link = `${process.env.CLIENT_URL}register?codigoCondominio=${condominio.codigoCondominio}`;
+
+      await transporter.sendMail({
+        from: '"Sistema de Gestão de Condomínios" <gestaodecondominios22@outlook.com>',
+        to: email,
+        subject: `Convite para registrar-se - ${condominio.nome}`,
+        html: `Olá, segue abaixo o link do convite para registrar-se no condomínio: <b>${condominio.nome}</b><br/>
+        <a href="${link}">${link}</a>`,
+      });
+
+      return res.json({ message: "Convite enviado com sucesso" });
+    } catch (error) {
+      res.status(400).send(error);
+      console.log(error);
+    }
+  }
+
+  static async conviteRegistroLink(req, res) {
+    const { user } = req;
+    try {
+      const condominio = await condominioRepository.getById(user._idCondominio);
+
+      const link = `${process.env.CLIENT_URL}register?codigoCondominio=${condominio.codigoCondominio}`;
+
+      return res.json({ link });
     } catch (error) {
       res.status(400).send(error);
       console.log(error);

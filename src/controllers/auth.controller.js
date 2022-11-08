@@ -39,6 +39,7 @@ module.exports = class AuthController {
         bloco,
         tipoUsuario: "morador",
         _idCondominio: condominio._id,
+        codigoCondominio: condominio.codigo
       });
       const userCreated = JSON.parse(JSON.stringify(user));
       delete userCreated.senha;
