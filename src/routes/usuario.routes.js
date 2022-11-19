@@ -15,6 +15,7 @@ const {
   updateUsuarioLogado,
   conviteRegistroEmail,
   conviteRegistroLink,
+  recuperarSenha,
 } = require("../controllers/usuario.controller");
 const { celebrate, Joi } = require("celebrate");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -22,7 +23,29 @@ const { messages } = require("joi-translation-pt-br");
 const UsuarioDTO = require("../database/dtos/usuario.dto.js");
 const authSuperAdminMiddleware = require("../middleware/authSuperAdmin.middleware.js");
 const authAdminMiddleware = require("../middleware/authAdmin.middleware.js");
+const authMiddleware = require("../middleware/auth.middleware.js");
 const { LIMIT } = require("../utils");
+
+router.post(
+  "/recuperar-senha",
+  celebrate(
+    {
+      body: Joi.object().keys({
+        email: Joi.string().required(),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  /* #swagger.tags = ['Usuário']
+  #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'Recuperar senha',
+                schema: { $email: 'nome@email.com' }
+        } */
+  recuperarSenha
+);
 
 router.post(
   "/convite-registro-email",
@@ -50,9 +73,6 @@ router.get(
   "/convite-registro-link",
   authAdminMiddleware,
   /* #swagger.tags = ['Usuário']
-  #swagger.parameters['body'] = {
-                in: 'body',
-                description: 'Convite de registro por link',
         } */
   conviteRegistroLink
 );
@@ -94,6 +114,7 @@ router.post(
 
 router.get(
   "/moradores/:id",
+  authMiddleware,
   /* #swagger.tags = ['Usuário']
  #swagger.parameters['id'] = {  in: 'path', description: 'id do usuário', type: 'string', required:true }
   */
@@ -112,6 +133,7 @@ router.get(
 
 router.put(
   "/moradores/update/:id",
+  authMiddleware,
   /* #swagger.tags = ['Usuário']
    #swagger.parameters['params'] = {
                 in: 'params',
@@ -145,6 +167,7 @@ router.put(
 
 router.delete(
   "/moradores/delete/:id",
+  authMiddleware,
   /* #swagger.tags = ['Usuário']
   #swagger.parameters['id'] = {  in: 'path', description: 'id do usuário', type: 'string', required:true } */
   celebrate(
@@ -162,6 +185,7 @@ router.delete(
 
 router.put(
   "/update-usuario-logado",
+  authMiddleware,
   /* #swagger.tags = ['Usuário']
   #swagger.parameters['body'] = {
                 in: 'body',
@@ -298,6 +322,7 @@ router.put(
 
 router.put(
   "/update-senha",
+  authMiddleware,
   /* #swagger.tags = ['Usuário']
   #swagger.parameters['body'] = {
                 in: 'body',
@@ -316,7 +341,6 @@ router.put(
   ),
   updateSenha
 );
-
 
 router.delete(
   "/delete/:id",

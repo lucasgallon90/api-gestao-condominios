@@ -1,10 +1,11 @@
 const usuarioRepository = require("../repositories/usuario.repository.js");
 const condominioRepository = require("../repositories/condominio.repository.js");
-const { LIMIT } = require("../utils/index.js");
+const { LIMIT, enviarEmail } = require("../utils/index.js");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../repositories/usuario.repository.js");
 const ObjectId = require("mongoose").Types.ObjectId;
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 module.exports = class Usuario {
   static async list(req, res) {
@@ -85,7 +86,7 @@ module.exports = class Usuario {
       return res.status(results ? 200 : 204).json(results);
     } catch (error) {
       console.log(error);
-      res.status(400).send(error);
+      res.status(400).json({ error });
     }
   }
 
@@ -128,7 +129,7 @@ module.exports = class Usuario {
       return res.status(results ? 200 : 204).json(results);
     } catch (error) {
       console.log(error);
-      res.status(400).send(error);
+      res.status(400).json({ error });
     }
   }
 
@@ -184,7 +185,7 @@ module.exports = class Usuario {
         .status(result ? 200 : 400)
         .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -219,7 +220,7 @@ module.exports = class Usuario {
         .status(result ? 200 : 400)
         .json(result ? result : { error: "Registro não encontrado" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -264,7 +265,7 @@ module.exports = class Usuario {
           .status(400)
           .json({ error: "Email já existe, por favor selecione outro" });
       }
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -286,7 +287,7 @@ module.exports = class Usuario {
         .status(result ? 200 : 400)
         .json(result ? usuario : { error: "Registro não encontrado" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -311,7 +312,7 @@ module.exports = class Usuario {
         .status(200)
         .json({ user: usuario, token: generateToken({ user: result }) });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -337,7 +338,7 @@ module.exports = class Usuario {
         .status(result ? 200 : 400)
         .json(result ? usuario : { error: "Registro não encontrado" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -354,7 +355,7 @@ module.exports = class Usuario {
       } */
       res.status(200).json({ message: "Senha alterada com sucesso" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -372,7 +373,7 @@ module.exports = class Usuario {
       }
       return res.json({ message: "Usuário deletado com sucesso" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -382,21 +383,11 @@ module.exports = class Usuario {
     const { email } = req.body;
     try {
       const condominio = await condominioRepository.getById(user._idCondominio);
-      const options = {
-        service: process.env.NODE_MAILER_SERVICE,
-        auth: {
-          user: process.env.NODE_MAILER_EMAIL,
-          pass: process.env.NODE_MAILER_PASS,
-        },
-        host: process.env.NODE_MAILER_HOST,
-        port: process.env.NODE_MAILER_PORT,
-        secure: process.env.NODE_MAILER_SECURE || false,
-      };
-      const transporter = nodemailer.createTransport(options);
+
       const link = `${process.env.CLIENT_URL}register?codigoCondominio=${condominio.codigoCondominio}`;
 
-      await transporter.sendMail({
-        from: '"Sistema de Gestão de Condomínios" <gestaodecondominios22@outlook.com>',
+      await enviarEmail({
+        from: `"Sistema de Gestão de Condomínios" <${process.env.NODE_MAILER_EMAIL}>`,
         to: email,
         subject: `Convite para registrar-se - ${condominio.nome}`,
         html: `Olá, segue abaixo o link do convite para registrar-se no condomínio: <b>${condominio.nome}</b><br/>
@@ -405,7 +396,7 @@ module.exports = class Usuario {
 
       return res.json({ message: "Convite enviado com sucesso" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -419,7 +410,61 @@ module.exports = class Usuario {
 
       return res.json({ link });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
+      console.log(error);
+    }
+  }
+
+  static async conviteRegistroLink(req, res) {
+    const { user } = req;
+    try {
+      const condominio = await condominioRepository.getById(user._idCondominio);
+
+      const link = `${process.env.CLIENT_URL}register?codigoCondominio=${condominio.codigoCondominio}`;
+
+      return res.json({ link });
+    } catch (error) {
+      res.status(400).json({ error });
+      console.log(error);
+    }
+  }
+
+  static async recuperarSenha(req, res) {
+    const { email } = req.body;
+    try {
+      const [usuario] = await usuarioRepository.get([
+        { $match: { email } },
+        { $limit: 1 },
+      ]);
+      if (!usuario) {
+        return res.status(400).json({ error: "Usuário não encontrado" });
+      }
+      delete usuario.senha;
+      delete usuario.createdAt;
+      delete usuario.updatedAt;
+
+      const token = jwt.sign(
+        {
+          user: usuario,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: 3600, //expira em 1 hora
+        }
+      );
+
+      const link = `${process.env.CLIENT_URL}nova-senha?token=${token}`;
+      await enviarEmail({
+        from: `"Sistema de Gestão de Condomínios" <${process.env.NODE_MAILER_EMAIL}>`,
+        to: usuario.email,
+        subject: "Recuperação de senha - Sistema de Gestão de condomínios",
+        html: `Olá, segue o link para criar uma nova senha de acesso ao Sistema de Gestão de condomínios.</br>
+       <a href="${link}">Recuperar senha</a>
+       <i>(Este link expira em 1 hora)</i>`,
+      });
+      return res.json({ message: "Email enviado com sucesso" });
+    } catch (error) {
+      res.status(400).json({ error });
       console.log(error);
     }
   }
@@ -441,7 +486,7 @@ module.exports = class Usuario {
       }
       return res.json({ message: "Morador deletado com sucesso" });
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json({ error });
       console.log(error);
     }
   }
