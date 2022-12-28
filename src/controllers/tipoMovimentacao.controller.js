@@ -18,6 +18,12 @@ module.exports = class TipoMovimentacao {
         page,
         limit,
       });
+      res.setHeader(
+        "X-Total-Count",
+        await tipoMovimentacaoRepository.getTotalCount({
+          filters: { _idCondominio: user._idCondominio, ...filters },
+        })
+      );
       /* #swagger.responses[200] = {
       description: 'Tipos de Movimentação listadas com sucesso',
       schema: [{ $ref: '#/definitions/TipoMovimentacaoResponse'}]

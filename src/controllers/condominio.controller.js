@@ -20,6 +20,10 @@ module.exports = class Condominio {
         filters,
         paginate,
       });
+      res.setHeader(
+        "X-Total-Count",
+        await condominioRepository.getTotal(filters)
+      );  
       /* #swagger.responses[200] = {
       description: 'Condomínios listados com sucesso',
       schema: [{ $ref: '#/definitions/CondominioResponse'}]

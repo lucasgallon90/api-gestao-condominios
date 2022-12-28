@@ -6,8 +6,13 @@ module.exports = class Cobranca {
   static async list(filters) {
     return cobranca.aggregate(filters);
   }
+
   static async get(filters) {
     return cobranca.aggregate(filters);
+  }
+
+  static async getTotalCount(filters) {
+    return cobranca.countDocuments(filters);
   }
 
   static async create(data) {

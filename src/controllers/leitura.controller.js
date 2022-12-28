@@ -9,14 +9,6 @@ module.exports = class Leitura {
     const filters = req.body;
     const { page = 1, limit = LIMIT } = req.query;
     try {
-      let paginate = {};
-      if (page && limit) {
-        paginate = [
-          { $skip: limit * (page - 1) },
-          { $limit: limit },
-          { $sort: { createdAt: -1 } },
-        ];
-      }
       let afterLookupFilter = null;
       if (filters.nomeMorador) {
         afterLookupFilter = {
@@ -59,17 +51,37 @@ module.exports = class Leitura {
             preserveNullAndEmptyArrays: true,
           },
         },
-        ...paginate,
       ];
+      const totalPipeline = {
+        $facet: {
+          paginatedResults: [
+            { $skip: limit * (page - 1) },
+            { $limit: limit },
+            { $sort: { createdAt: -1 } },
+          ],
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      };
       if (afterLookupFilter) {
         pipeline.push(afterLookupFilter);
       }
-      const results = await leituraRepository.list(pipeline);
+      pipeline.push(totalPipeline);
+      const [results] = await leituraRepository.list(pipeline);
+
+      const totalCount = results?.totalCount[0]?.count || 0;
+
+      res.setHeader("X-Total-Count", totalCount);
       /* #swagger.responses[200] = {
-      description: 'Leituras listadas com sucesso',
+      description: 'Leituras listados com sucesso',
       schema: [{ $ref: '#/definitions/LeituraResponse'}]
       } */
-      return res.json(results);
+      return res
+        .status(results?.paginatedResults ? 200 : 204)
+        .json(results?.paginatedResults);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

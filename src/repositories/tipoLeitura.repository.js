@@ -4,8 +4,13 @@ module.exports = class TipoLeitura {
   static async list({ filters, paginate }) {
     return tipoLeitura.find(filters, {}, paginate);
   }
+
   static async get(filters) {
     return tipoLeitura.findOne(filters);
+  }
+
+  static async getTotalCount(filters) {
+    return tipoLeitura.countDocuments(filters);
   }
 
   static async create(data) {

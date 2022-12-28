@@ -115,7 +115,7 @@ module.exports = class Caixa {
   }
 
   static async getSaldos(filters) {
-    return await condominio.findOne(filters, {
+    return condominio.findOne(filters, {
       saldoCaixaInicial: 1,
       saldoCaixaAtual: 1,
     });
@@ -136,5 +136,11 @@ module.exports = class Caixa {
     return {
       total: (totalMovimentacoes?.total || 0) + (totalCobrancas?.total || 0),
     };
+  }
+
+  static async getTotalCount(filters) {
+    const cobrancas = (await cobranca.countDocuments(filters)) || 0;
+    const movimentacoes = (await movimentacao.countDocuments(filters)) || 0;
+    return cobrancas + movimentacoes;
   }
 };

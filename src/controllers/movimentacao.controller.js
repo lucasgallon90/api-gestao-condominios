@@ -58,6 +58,12 @@ module.exports = class Movimentacao {
         ...paginate,
       ];
       const results = await movimentacaoRepository.list(pipeline);
+      res.setHeader(
+        "X-Total-Count",
+        await movimentacaoRepository.getTotalCount({
+          filters: { _idCondominio: user._idCondominio, ...filters },
+        })
+      );
       /* #swagger.responses[200] = {
       description: 'Movimentações listadas com sucesso',
       schema: [{ $ref: '#/definitions/MovimentacaoResponse'}]

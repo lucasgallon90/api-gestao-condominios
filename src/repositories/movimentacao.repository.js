@@ -9,6 +9,10 @@ module.exports = class Movimentacao {
     return movimentacao.aggregate(filters);
   }
 
+  static async getTotalCount(filters) {
+    return movimentacao.countDocuments(filters);
+  }
+
   static async getContasMesAno(filters) {
     return movimentacao.aggregate(filters);
   }

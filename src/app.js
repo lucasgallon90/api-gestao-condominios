@@ -27,6 +27,10 @@ var optionsSwagger = {
 
 const app = express();
 const version = "v1";
+app.use((req, res, next) => {
+  res.header("Access-Control-Expose-Headers", "X-Total-Count");
+  next();
+});
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());

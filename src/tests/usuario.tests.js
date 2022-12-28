@@ -125,4 +125,28 @@ describe("Usuários", () => {
         expect(response.type).toBe("application/json");
       });
   });
+
+  test("Recuperar senha", async () => {
+    return await request(app)
+      .post(`/v1/usuarios/recuperar-senha`)
+      .send({
+        email: usuarios[0]?.email,
+      })
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
+
+  test("Enviar convite de registro", async () => {
+    return await request(app)
+      .post(`/v1/usuarios/recuperar-senha`)
+      .send({
+        email: usuarios[0]?.email,
+      })
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
 });

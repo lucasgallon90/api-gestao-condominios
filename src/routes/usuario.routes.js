@@ -47,6 +47,8 @@ router.post(
   recuperarSenha
 );
 
+router.use(authMiddleware);
+
 router.post(
   "/convite-registro-email",
   authAdminMiddleware,

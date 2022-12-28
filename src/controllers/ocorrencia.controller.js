@@ -12,14 +12,7 @@ module.exports = class Ocorrencia {
       if (user.tipoUsuario != "admin") {
         filters._idUsuarioOcorrencia = ObjectId(user._id);
       }
-      let paginate = {};
-      if (page && limit) {
-        paginate = [
-          { $skip: limit * (page - 1) },
-          { $limit: limit },
-          { $sort: { createdAt: -1 } },
-        ];
-      }
+     
       filters.motivo && (filters.motivo = { $regex: `.*${filters.motivo}.*` });
       filters.createdAt &&
         (filters.createdAt = {
@@ -54,17 +47,37 @@ module.exports = class Ocorrencia {
             preserveNullAndEmptyArrays: true,
           },
         },
-        ...paginate,
       ];
+      const totalPipeline = {
+        $facet: {
+          paginatedResults: [
+            { $skip: limit * (page - 1) },
+            { $limit: limit },
+            { $sort: { createdAt: -1 } },
+          ],
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      };
       if (afterLookupFilter) {
         pipeline.push(afterLookupFilter);
       }
-      const results = await ocorrenciaRepository.list(pipeline);
+      pipeline.push(totalPipeline);
+      const [results] = await ocorrenciaRepository.list(pipeline);
+
+      const totalCount = results?.totalCount[0]?.count || 0;
+
+      res.setHeader("X-Total-Count", totalCount);
       /* #swagger.responses[200] = {
-      description: 'Ocorrências listadas com sucesso',
+      description: 'Ocorrências listados com sucesso',
       schema: [{ $ref: '#/definitions/OcorrenciaResponse'}]
       } */
-      return res.json(results);
+      return res
+        .status(results?.paginatedResults ? 200 : 204)
+        .json(results?.paginatedResults);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

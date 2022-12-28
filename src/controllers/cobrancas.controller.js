@@ -35,7 +35,7 @@ module.exports = class Cobranca {
             (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
         );
       }
-      
+
       const results = await cobrancaRepository.list([
         {
           $match: { _idCondominio: ObjectId(user._idCondominio), ...filters },
@@ -64,6 +64,12 @@ module.exports = class Cobranca {
         },
         ...paginate,
       ]);
+      res.setHeader(
+        "X-Total-Count",
+        await cobrancaRepository.getTotalCount({
+          filters: { _idCondominio: user._idCondominio, ...filters },
+        })
+      );
       /* #swagger.responses[200] = {
       description: 'Cobranças listadas com sucesso',
       schema: [{ $ref: '#/definitions/CobrancaResponse'}]

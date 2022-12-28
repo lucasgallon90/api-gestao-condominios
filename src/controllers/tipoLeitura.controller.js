@@ -21,6 +21,12 @@ module.exports = class TipoLeitura {
         filters: { _idCondominio: user._idCondominio, ...filters },
         paginate,
       });
+      res.setHeader(
+        "X-Total-Count",
+        await tipoLeituraRepository.getTotalCount({
+          filters: { _idCondominio: user._idCondominio, ...filters },
+        })
+      );
 
       /* #swagger.responses[200] = {
       description: 'Tipos de Leitura listadas com sucesso',

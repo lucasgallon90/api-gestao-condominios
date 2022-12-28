@@ -25,12 +25,9 @@ module.exports = class Caixa {
             (filters[key] = { $regex: `.*${filters[key]}.*`, $options: "i" })
         );
       }
+      filters.dataPagamento = { $ne: null };
       const results = await caixaRepository.list({
-        filters: {
-          _idCondominio: user._idCondominio,
-          dataPagamento: { $ne: null },
-          ...filters,
-        },
+        filters: { _idCondominio: user._idCondominio, ...filters },
         paginate,
       });
       results.sort(function (a, b) {
@@ -42,6 +39,13 @@ module.exports = class Caixa {
         }
         return 0;
       });
+
+      res.setHeader(
+        "X-Total-Count",
+        await caixaRepository.getTotalCount({
+          filters: { _idCondominio: user._idCondominio, ...filters },
+        })
+      );
       /* #swagger.responses[200] = {
       description: 'Caixa listado com sucesso',
       schema: [{ $ref: '#/definitions/CaixaResponse'}]
@@ -57,12 +61,9 @@ module.exports = class Caixa {
     const { user } = req;
     const { saldoInicial } = req.body;
     try {
-      const saldosAnteriores = await caixaRepository.getSaldos();
-      if (
-        saldosAnteriores.saldoCaixaInicial ===
-          saldosAnteriores.saldoCaixaAtual &&
-        saldoInicial === 0
-      ) {
+      const { saldoCaixaInicial, saldoCaixaAtual } =
+        await caixaRepository.getSaldos();
+      if (saldoCaixaInicial === saldoCaixaAtual && saldoInicial === 0) {
         await caixaRepository.updateSaldoInicial({
           filters: { _id: user._idCondominio },
           data: {
@@ -75,10 +76,7 @@ module.exports = class Caixa {
           filters: { _id: user._idCondominio },
           data: {
             saldoCaixaInicial: saldoInicial,
-            saldoCaixaAtual:
-              saldoInicial +
-              (saldosAnteriores.saldoAtual || 0) -
-              (saldosAnteriores.saldoInicial || 0),
+            saldoCaixaAtual: saldoInicial - saldoCaixaInicial + saldoCaixaAtual,
           },
         });
       }
@@ -88,6 +86,7 @@ module.exports = class Caixa {
       } */
       return res.json({ saldoInicial });
     } catch (error) {
+      console.log(error);
       res.status(400).json(error);
     }
   }
@@ -154,7 +153,7 @@ module.exports = class Caixa {
       ]);
       /* #swagger.responses[200] = {
       description: 'Total de saídas do caixa',
-      schema: [{ saldoInicial: 500}]
+      schema: [{ total: 500}]
       } */
       return res.json({ total: result?.total || 0 });
     } catch (error) {
@@ -197,7 +196,7 @@ module.exports = class Caixa {
       );
       /* #swagger.responses[200] = {
       description: 'Total de saídas do caixa',
-      schema: [{ saldoInicial: 500}]
+      schema: [{ total: 500}]
       } */
       return res.json({ total: result.total || 0 });
     } catch (error) {

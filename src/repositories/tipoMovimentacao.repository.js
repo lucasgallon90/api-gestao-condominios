@@ -8,8 +8,13 @@ module.exports = class TipoMovimentacao {
     }
     return tipoMovimentacao.find(filters, {}, paginate);
   }
+
   static async get(filters) {
     return tipoMovimentacao.findOne(filters);
+  }
+
+  static async getTotalCount(filters) {
+    return tipoMovimentacao.countDocuments(filters);
   }
 
   static async getIds(filters) {
