@@ -117,14 +117,15 @@ module.exports = class Caixa {
   static async getSaldoAtual(req, res) {
     const { user } = req;
     try {
-      const result = await caixaRepository.getSaldoAtual({
-        filters: { _id: user._idCondominio },
-      });
+      const { saldoCaixaAtual, saldoCaixaInicial } =
+        await caixaRepository.getSaldoAtual({
+          filters: { _id: user._idCondominio },
+        });
       /* #swagger.responses[200] = {
       description: 'Saldo atual do caixa',
       schema: [{ saldoCaixaAtual: 500}]
       } */
-      return res.json({ saldoCaixaAtual: result.saldoCaixaAtual });
+      return res.json({ saldoCaixaAtual, saldoCaixaInicial });
     } catch (error) {
       res.status(400).json(error);
     }

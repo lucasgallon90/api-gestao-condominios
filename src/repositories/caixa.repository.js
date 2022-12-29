@@ -122,7 +122,7 @@ module.exports = class Caixa {
   }
 
   static async getSaldoAtual(filters) {
-    return await condominio.findOne(filters, { saldoCaixaAtual: 1 });
+    return await condominio.findOne(filters, { saldoCaixaAtual: 1, saldoCaixaInicial:1 });
   }
 
   static async getTotalSaidas(filters) {
