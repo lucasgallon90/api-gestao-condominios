@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { celebrate, Joi } = require("celebrate");
-Joi.objectId = require('joi-objectid')(Joi)
+Joi.objectId = require("joi-objectid")(Joi);
 const { messages } = require("joi-translation-pt-br");
-const CobrancaDTO = require("../database/dtos/cobranca.dto.js")
+const CobrancaDTO = require("../database/dtos/cobranca.dto.js");
 const {
   list,
   get,
@@ -11,6 +11,7 @@ const {
   create,
   update,
   getContasMesAno,
+  enviarEmail,
 } = require("../controllers/cobrancas.controller");
 const { LIMIT } = require("../utils/index.js");
 
@@ -24,7 +25,10 @@ router.post(
         dataVencimento: Joi.date().optional(),
         dataPagamento: Joi.date().optional(),
       }),
-      query: Joi.object().keys({ page: Joi.number().optional(),limit: Joi.number().optional().max(LIMIT), }),
+      query: Joi.object().keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional().max(LIMIT),
+      }),
     },
     {
       messages: messages,
@@ -99,7 +103,8 @@ router.post(
     },
     {
       messages: messages,
-    }),
+    }
+  ),
   /* #swagger.tags = ['Cobrança']
     #swagger.parameters['body'] = {
                   in: 'body',
@@ -107,6 +112,28 @@ router.post(
                   schema: { $ref: '#/definitions/Cobranca' }
           } */
   create
+);
+
+router.post(
+  "/enviar-email",
+  /* #swagger.tags = ['Movimentação']
+    #swagger.parameters['body'] = { in: 'body', description: 'Enviar cobrança por email', type: 'string',  schema: {
+                      $id: '61fc6aa5b49ec355ca0300b4',
+                      email: 'enderecoemail@dominio.com.br',
+                  }}
+    */
+  celebrate(
+    {
+      body: Joi.object().keys({
+        id: Joi.objectId().required(),
+        email: Joi.string().optional().allow("", null),
+      }),
+    },
+    {
+      messages: messages,
+    }
+  ),
+  enviarEmail
 );
 
 router.put(
@@ -120,7 +147,8 @@ router.put(
     },
     {
       messages: messages,
-    }),
+    }
+  ),
   /* #swagger.tags = ['Cobrança']
    #swagger.parameters['params'] = {
                 in: 'params',

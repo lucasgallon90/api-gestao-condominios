@@ -3,8 +3,9 @@ const condominioRepository = require("../repositories/condominio.repository.js")
 const leituraRepository = require("../repositories/leitura.repository.js");
 const movimentacaoRepository = require("../repositories/movimentacao.repository.js");
 const usuarioRepository = require("../repositories/usuario.repository.js");
+const { formatarMoeda, enviarEmail } = require("../utils/index.js");
 const moment = require("moment");
-const { LIMIT } = require("../utils");
+const { LIMIT, printPDF } = require("../utils");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = class Cobranca {
@@ -231,6 +232,125 @@ module.exports = class Cobranca {
     }
   }
 
+  static async enviarEmail(req, res) {
+    const { id, email } = req.body;
+    const { user } = req;
+    try {
+      const filters = [
+        {
+          $match: {
+            _id: ObjectId(id),
+            _idCondominio: ObjectId(user._idCondominio),
+          },
+        },
+        {
+          $lookup: {
+            from: "itemsCobranca",
+            localField: "_id",
+            foreignField: "_idCobranca",
+            as: "itemsCobranca",
+          },
+        },
+        {
+          $lookup: {
+            from: "usuarios",
+            localField: "_idUsuarioCobranca",
+            foreignField: "_id",
+            as: "morador",
+          },
+        },
+        {
+          $unwind: {
+            path: "$morador",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ];
+
+      const [values] = await cobrancaRepository.get(filters);
+
+      const condominio = await condominioRepository.getById(user._idCondominio);
+
+      const dataPDF = {
+        title: "Cobrança",
+        header: [
+          { label: "Nome", value: values.morador.nome },
+          {
+            label: `Apto${values.morador.bloco ? "/Bloco" : ""}`,
+            value: values.morador.bloco
+              ? `${values.morador.apto}/${values.morador.bloco}`
+              : values.morador.apto,
+          },
+          {
+            label: "Descrição",
+            value: values.descricao,
+          },
+          {
+            label: "Data Vencimento",
+            value: values.dataVencimento
+              ? moment(values.dataVencimento).format("DD/MM/YY")
+              : "-",
+          },
+          {
+            label: "Data Pagamento",
+            value: values.dataPagamento
+              ? moment(values.dataPagamento).format("DD/MM/YY")
+              : "-",
+          },
+          {
+            label: "Mês/Ano",
+            value: moment(values.mesAno + "-01").format("MM/YYYY"),
+          },
+        ],
+        columnHead: [
+          {
+            label: "Conta/Leitura",
+            key: "_idMovimentacao",
+            format: (value) => (value ? "Conta" : "Leitura"),
+          },
+          { label: "Descrição", key: "descricao" },
+          {
+            label: "Leitura",
+            groupKey: ["leitura", "unidadeMedida"],
+            key: "leitura",
+          },
+          {
+            label: "Valor Conta Rateada / Leitura",
+            key: "valor",
+            format: (value) => formatarMoeda(value),
+          },
+        ],
+        data: values.itemsCobranca,
+        total: formatarMoeda(values.valor),
+      };
+      const pdf = printPDF(dataPDF);
+
+      await enviarEmail({
+        from: `"Sistema de Gestão de Condomínios" <${process.env.NODE_MAILER_EMAIL}>`,
+        to: email,
+        attachments: [
+          {
+            filename: `cobranca_${moment(values.mesAno + "-01").format(
+              "MM/YYYY"
+            )}.pdf`,
+            content: pdf,
+          },
+        ],
+        subject: `Cobrança do Condomínio - ${moment(
+          values.mesAno + "-01"
+        ).format("MM/YYYY")} - ${condominio.nome}`,
+        html: `Olá, segue em anexo a cobrança referente ao mês/ano ${moment(
+          values.mesAno + "-01"
+        ).format("MM/YYYY")} do condomínio: <b>${condominio.nome}</b>`,
+      });
+
+      return res.json({ message: "Email enviado com sucesso!" });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json(error);
+    }
+  }
+
   static async create(req, res) {
     const cobranca = req.body;
     const { user } = req;
@@ -259,6 +379,7 @@ module.exports = class Cobranca {
       res.status(400).json(error);
     }
   }
+
   static async update(req, res) {
     const { id } = req.params;
     const cobranca = req.body;
