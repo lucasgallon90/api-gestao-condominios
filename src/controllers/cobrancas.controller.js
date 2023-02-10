@@ -327,7 +327,7 @@ module.exports = class Cobranca {
 
       await enviarEmail({
         from: `"Sistema de Gestão de Condomínios" <${process.env.NODE_MAILER_EMAIL}>`,
-        to: email,
+        to: email || user.email,
         attachments: [
           {
             filename: `cobranca_${moment(values.mesAno + "-01").format(
@@ -338,10 +338,10 @@ module.exports = class Cobranca {
         ],
         subject: `Cobrança do Condomínio - ${moment(
           values.mesAno + "-01"
-        ).format("MM/YYYY")} - ${condominio.nome}`,
+        ).format("MM/YYYY")} - ${condominio?.nome}`,
         html: `Olá, segue em anexo a cobrança referente ao mês/ano ${moment(
           values.mesAno + "-01"
-        ).format("MM/YYYY")} do condomínio: <b>${condominio.nome}</b>`,
+        ).format("MM/YYYY")} do condomínio: <b>${condominio?.nome}</b>`,
       });
 
       return res.json({ message: "Email enviado com sucesso!" });

@@ -88,6 +88,18 @@ describe("Cobranças", () => {
       });
   });
 
+  test("Enviar email com cobrança", () => {
+    return request(app)
+      .post(`/v1/cobrancas/enviar-email`)
+      .send({ id: idCreated, email: process.env.NODE_MAILER_EMAIL })
+      .set("Authorization", `Bearer ${token}`)
+      .then((response) => {
+        console.log(response.error.text);
+        expect(response.statusCode).toBe(200);
+        expect(response.type).toBe("application/json");
+      });
+  });
+
   test("Deletar cobrança", async () => {
     let cobrancaToDelete = {
       _idUsuarioCobranca: usuarioLogado._id,
